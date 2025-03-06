@@ -6,6 +6,7 @@ import FashionOffers from "./components/FashionOffers";
 import ProductCategories from"./components/ProductCategories";
 import FeaturedBanner from "./components/FeaturedBanner";
 import FeaturedProducts from "./components/FeaturedProducts";
+import Footer from "./components/Footer";
 function App() {
   return (
     <div>
@@ -16,6 +17,7 @@ function App() {
       <ProductCategories />
       <FeaturedBanner />
       <FeaturedProducts />
+      <Footer />
     </div>
   );
   
