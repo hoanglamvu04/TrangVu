@@ -1,0 +1,123 @@
+/* Tổng quan */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #000000, #434343);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    gap: 10px;
+}
+.top-bar span {
+  margin-right: 8px;
+}
+.right-menu {
+  margin-left: auto;
+  display: flex;
+  gap: 10px; 
+}
+  .top-bar .right-menu span {
+    margin-left: 15px;
+    cursor: pointer;
+  }
+  
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: white;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 600px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 14px;
+    background: transparent;
+}
+
+.search-bar .search-btn {
+    background: black;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+}
+
+.icon {
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.icon:nth-child(1) { color: #4B0082; }  /* User */
+.icon:nth-child(2) { color: #000; }  /* Giỏ hàng */
+.icon:nth-child(3) { color: #FF0000; }  /* Trái tim */
+.icon:nth-child(4) { color: #808080; }  /* Chat */
+.icon:nth-child(5) { color: #00A0E3; }  /* Ngôn ngữ */
+
+.icon:hover {
+    transform: scale(1.2);
+}
+
+.cart {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+  
+  
