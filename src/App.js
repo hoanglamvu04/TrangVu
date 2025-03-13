@@ -8,7 +8,10 @@ import ProductCategories from "./components/ProductCategories";
 import FeaturedBanner from "./components/FeaturedBanner";
 import FeaturedProducts from "./components/FeaturedProducts";
 import Footer from "./components/Footer";
-import LoginPage from "./pages/LoginPage"; 
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+
 function App() {
   return (
     <Router>
@@ -24,7 +27,9 @@ function App() {
             <FeaturedProducts />
           </>
         } />
-        <Route path="/login" element={<LoginPage />} /> 
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/ForgotPassword" element={<ForgotPassword />} />
       </Routes>
       <Footer />
     </Router>

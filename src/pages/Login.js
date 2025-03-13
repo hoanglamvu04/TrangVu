@@ -5,7 +5,7 @@ const LoginPage = () => {
   return (
     <div className="login-wrapper">
       <div className="login-container">
-        {/* Phần form đăng nhập */}
+    
         <div className="login-form">
           <h2>Chào mừng trở lại!</h2>
           <p className="sub-text">Đăng nhập để tiếp tục mua sắm</p>
@@ -30,14 +30,15 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <p className="forgot-password">Quên mật khẩu?</p>
+            <p className="register-link">
+              <a href="/ForgotPassword"> Quên mật khẩu?</a>
+            </p>
             <p className="register-link">
               Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
             </p>
           </form>
         </div>
 
-        {/* Phần ảnh bên phải */}
         <div className="login-image">
           <img src="/assets/images/login-banner.png" alt="Welcome Image" />
           <h3>Khám phá phong cách của bạn</h3>
