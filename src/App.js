@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
         <Route path="/Cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
       </Routes>
       <Footer />
     </Router>

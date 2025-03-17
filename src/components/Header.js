@@ -36,7 +36,7 @@ const Header = () => {
           <div className="user-actions">
         <span className="icon cart-icon" onClick={() => navigate("/cart")}>🛒</span>
       </div>
-          <span className="icon">❤️</span>
+      <span className="icon" onClick={() => navigate("/wishlist")}>❤️</span>
           <span className="icon">💬</span>
           <span className="icon">🌐</span>
         </div>
