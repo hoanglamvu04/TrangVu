@@ -202,34 +202,70 @@
   justify-content: center;
   align-items: center;
 }
-.message {
+/* ✅ Modal hiển thị thông báo */
+.success-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
   text-align: center;
+  width: 320px;
+}
+
+/* ✅ Nội dung modal */
+.success-content {
   font-size: 16px;
   font-weight: bold;
-  padding: 10px;
-  margin: 10px 0;
+  color: #155724;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 15px;
   border-radius: 5px;
 }
-
-.success-message {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-.countdown-message {
+/* ✅ Modal thông báo */
+.success-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 25px 35px;
+  border-radius: 12px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
   text-align: center;
-  font-size: 14px;
+  width: 350px;
+}
+
+/* ✅ Nội dung modal */
+.success-content {
+  font-size: 18px;
   font-weight: bold;
   color: #155724;
-  background-color: #d4edda;
-  padding: 8px;
-  margin-top: 10px;
-  border-radius: 5px;
+  background: #d4edda;
   border: 1px solid #c3e6cb;
+  padding: 18px;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* ✅ Nút đóng "X" */
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-btn:hover {
+  color: red;
 }
