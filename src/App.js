@@ -7,12 +7,9 @@ import ProductCategories from "./components/ProductCategories";
 import FeaturedBanner from "./components/FeaturedBanner";
 import FeaturedProducts from "./components/FeaturedProducts";
 import Footer from "./components/Footer";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
-
+import AuthPage from "./pages/AuthPage";
 function App() {
   return (
     <Router>
@@ -27,11 +24,9 @@ function App() {
             <FeaturedProducts />
           </>
         } />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/ForgotPassword" element={<ForgotPassword />} />
         <Route path="/Cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/AuthPage" element={<AuthPage />} />
       </Routes>
       <Footer />
     </Router>
