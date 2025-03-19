@@ -7,36 +7,32 @@
     background: linear-gradient(to right, #ffffff, #f3f4f6);
 }
 
-/* ✅ Container chính */
 .auth-container {
     position: relative;
     width: 850px;
     max-width: 100%;
+    height: auto; 
     background: #fff;
     border-radius: 12px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     display: flex;
-    transition: transform 0.6s ease-in-out, height 0.3s ease-in-out;
+    transition: transform 0.6s ease-in-out, min-height 0.3s ease-in-out;
+    margin: 40px 0;
 }
 
-/* Điều chỉnh chiều cao linh hoạt */
-.auth-container.auth-container-expanded {
-    height: 650px;
-}
-
-.auth-container:not(.auth-container-expanded) {
-    height: 500px;
+.auth-container.auth-sign-up-mode {
+    min-height: auto;
 }
 
 /* ✅ Form đăng nhập và đăng ký */
 .auth-form-container {
-    position: absolute;
+    position: relative; 
     width: 50%;
     padding: 40px;
     text-align: center;
-    transition: all 0.6s ease-in-out;
 }
+
 
 /* Hiển thị Đăng Nhập ban đầu */
 .auth-sign-in {
@@ -87,7 +83,6 @@
 
 .auth-subtext {
     font-size: 14px;
-    color: #666;
     margin-bottom: 20px;
 }
 
@@ -157,20 +152,43 @@
     text-align: center;
     padding: 40px;
     transition: transform 0.6s ease-in-out;
-    background: linear-gradient(to right, #ff6b6b, #ff4757);
+    background: url("../assets/images/nen-hello-kitty.png") center/cover no-repeat;
 }
-
 .auth-container.auth-sign-up-mode .auth-overlay-container {
     transform: translateX(-100%);
 }
+.auth-overlay-container .auth-overlay-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.auth-overlay-container.auth-sign-in-panel {
+    display: flex;
+}
 
+.auth-overlay-container.auth-sign-up-panel {
+    display: none;
+}
+
+.auth-container.auth-sign-up-mode .auth-overlay-container.auth-sign-in-panel {
+    display: none;
+}
+
+.auth-container.auth-sign-up-mode .auth-overlay-container.auth-sign-up-panel {
+    display: flex;
+}
 .auth-overlay h1 {
     font-size: 24px;
     font-weight: bold;
+    color: #E91E63;
+    z-index: 1;
 }
 
 .auth-overlay p {
     font-size: 14px;
+    font-weight: bold;
+    color: black;
 }
 
 
@@ -184,18 +202,24 @@
     text-decoration: underline;
 }
 .auth-panel-btn {
-    background: white;
-    color: #ff6b6b;
+    background: #D81B60;
+    color: white;
     font-weight: bold;
-    border: 2px solid white;
+    border: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 120px;
     transition: 0.3s;
+    padding: 10px 20px;
+    margin-top: 10px;
 }
 
 .auth-panel-btn:hover {
-    background: transparent;
-    color: white;
+    background: red;
+    
 }
 
-.auth-alt-text{
+.auth-alt-text {
     margin-top: 10px;
 }
+

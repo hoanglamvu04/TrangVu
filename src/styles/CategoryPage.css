@@ -1,0 +1,49 @@
+.category-page {
+ padding: 15px 0 0 15px;
+}
+
+.category-container {
+  display: flex;
+  gap: 20px;
+}
+
+.filter-sidebar {
+  width: 330px;
+  background: #fff;
+  padding: 0 15px 0 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+/* Khu vực danh sách sản phẩm */
+.product-section {
+  flex-grow: 1;
+}
+
+/* Lưới sản phẩm */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+}
+
+/* Điều chỉnh khi màn hình nhỏ hơn */
+@media (max-width: 1024px) {
+  .category-container {
+    flex-direction: column;
+  }
+
+  .filter-sidebar {
+    width: 100%;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 cột trên màn hình nhỏ */
+  }
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(1, 1fr); /* 1 cột trên màn hình di động */
+  }
+}

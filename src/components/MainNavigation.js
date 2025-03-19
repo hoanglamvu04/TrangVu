@@ -4,7 +4,7 @@ const Menu = () => {
   return (
     <div className="menu-container">
       <a href="/" className="menu-item">Trang Chủ</a>
-      <a href="/category/san-pham-noi-bat" className="menu-item">Sản Phẩm Nổi Bật</a>
+      <a href="/category/" className="menu-item">Sản Phẩm Nổi Bật</a>
       <a href="/category/hang-moi-ve" className="menu-item">Hàng Mới Về</a>
       <a href="/category/ao-nam" className="menu-item">Áo Nam</a>
       <a href="/category/ao-nu" className="menu-item">Áo Nữ</a>
