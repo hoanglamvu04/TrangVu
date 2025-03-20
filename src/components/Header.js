@@ -33,6 +33,9 @@ const Header = () => {
           <span className="icon" onClick={() => navigate("/AuthPage")} style={{ cursor: "pointer" }}>
             👤
           </span>
+          <span className="icon" onClick={() => navigate("/CustomerProfile")} style={{ cursor: "pointer" }}>
+            👤
+          </span>
           <div className="user-actions">
         <span className="icon cart-icon" onClick={() => navigate("/cart")}>🛒</span>
       </div>

@@ -10,6 +10,8 @@ import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
 import AuthPage from "./pages/AuthPage";
 import Category from "./pages/Category";
+import CustomerProfile from "./pages/CustomerProfile";
+
 function App() {
   return (
     <Router>
@@ -27,6 +29,7 @@ function App() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/AuthPage" element={<AuthPage />} />
         <Route path="/Category" element={<Category />} />
+        <Route path="/CustomerProfile" element={<CustomerProfile />} />
       </Routes>
       <Footer />
     </Router>
