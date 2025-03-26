@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import MainNavigation from "./components/MainNavigation";
 import Banner from "./components/Banner";
@@ -11,6 +11,7 @@ import Wishlist from "./pages/Wishlist";
 import AuthPage from "./pages/AuthPage";
 import Category from "./pages/Category";
 import CustomerProfile from "./pages/CustomerProfile";
+import ProductDetail from "./pages/ProductDetail";
 
 function App() {
   return (
@@ -29,7 +30,9 @@ function App() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/AuthPage" element={<AuthPage />} />
         <Route path="/Category" element={<Category />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/CustomerProfile" element={<CustomerProfile />} />
+        <Route path="/order-management" element={<CustomerProfile />} />
       </Routes>
       <Footer />
     </Router>

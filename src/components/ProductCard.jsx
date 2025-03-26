@@ -2,6 +2,8 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import "../styles/ProductCard.css";
+import { Link } from "react-router-dom";
+
 
 const ProductCard = ({ product }) => {
   return (
@@ -12,11 +14,10 @@ const ProductCard = ({ product }) => {
       </div>
       <a href="">
       <img src={product.image} alt={product.name} />
-      </a>
-      <a href="">
-      <div className="product-name">{product.name}</div>
-
-      </a>
+        </a>
+            <Link to={`/product/${product.id}`}>
+          <div className="product-name">{product.name}</div>
+        </Link>
       <div className="product-colors">
         {product.colors.map((color, index) => (
           <span

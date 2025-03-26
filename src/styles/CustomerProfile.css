@@ -1,9 +1,11 @@
+/* Định dạng chung */
 .customer-profile {
   display: flex;
   background-color: #f5f5f5;
   min-height: 100vh;
 }
 
+/* Sidebar */
 .sidebar {
   width: 280px;
   background: white;
@@ -27,14 +29,6 @@
   transition: 0.3s;
 }
 
-.sidebar-item svg {
-  margin-right: 10px;
-}
-
-.sidebar-item:hover {
-  background: #f0f0f0;
-}
-
 .sidebar-item.active {
   background: black;
   color: white;
@@ -44,9 +38,10 @@
   color: red;
 }
 
+/* Nội dung chính */
 .profile-content {
   flex: 1;
-  padding: 20px 15px 20px 15px;
+  padding: 20px;
   background: white;
   margin: 20px;
   border-radius: 8px;
@@ -55,14 +50,10 @@
 h2 {
   font-size: 24px;
   font-weight: bold;
+  margin-bottom: 15px;
 }
 
-.login-title {
-  margin-top: 20px; 
-  font-size: 24px;
-  font-weight: bold;
-}
-
+/* Hồ sơ cá nhân */
 .profile-card {
   display: flex;
   align-items: center;
@@ -129,6 +120,115 @@ h2 {
   background: green;
   color: white;
 }
+
+/* Quản lý địa chỉ */
+.address-management {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.address-card {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  transition: 0.3s ease;
+}
+
+.address-card:hover {
+  background: #e9ecef;
+}
+
+.address-info {
+  font-size: 16px;
+  color: #222;
+}
+
+.address-info strong {
+  font-size: 18px;
+  color: #000;
+}
+
+.address-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.address-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-icon, .delete-icon {
+  cursor: pointer;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.edit-icon:hover {
+  color: #007bff;
+}
+
+.delete-icon:hover {
+  color: #ff4d4d;
+}
+
+/* Form thêm địa chỉ */
+.address-form {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.address-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.add-btn, .save-btn {
+  background: #ff6600;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.add-btn:hover, .save-btn:hover {
+  background: #e65c00;
+}
+
+/* Thông tin đăng nhập */
+.login-title {
+  margin-top: 25px; 
+  font-size: 24px;
+  font-weight: bold;
+}
+
 .login-info {
   background: #f8f8f8;
   padding: 20px;
