@@ -16,6 +16,7 @@ const categoriesData = {
     { name: "Áo Thể Thao", image: "/assets/images/women/ao-the-thao.png", link: "/category/ao-the-thao" },
     { name: "Quần Thể Thao", image: "/assets/images/women/quan-the-thao.png", link: "/category/quan-the-thao" },
     { name: "Phụ Kiện", image: "/assets/images/women/phu-kien.png", link: "/category/phu-kien" },
+    { name: "Váy Tennis", image: "/assets/images/women/vay-tennis.png", link: "/category/vay-tennis" },
   ],
 };
 
