@@ -12,6 +12,10 @@ const categoriesData = {
     { name: "Phụ Kiện", image: "/assets/images/men/phu-kien.png", link: "/category/phu-kien" },
   ],
   women: [
+    { name: "Đầm Công Chúa", image: "/assets/images/women/dam-cong-chua.png", link: "/category/dam-cong-chua" },
+    { name: "Váy Công Chúa", image: "/assets/images/women/vay-cong-chua.png", link: "/category/vay-cong-chua" },
+    { name: "Váy Hồng", image: "/assets/images/women/vay-hong.png", link: "/category/vay-honghong" },
+    { name: "Váy Sẻ Tà", image: "/assets/images/women/vay-se-ta.png", link: "/category/vay-se-ta" },
     { name: "Bra & Leggings", image: "/assets/images/women/bra-leggings.png", link: "/category/bra-leggings" },
     { name: "Áo Thể Thao", image: "/assets/images/women/ao-the-thao.png", link: "/category/ao-the-thao" },
     { name: "Quần Thể Thao", image: "/assets/images/women/quan-the-thao.png", link: "/category/quan-the-thao" },
