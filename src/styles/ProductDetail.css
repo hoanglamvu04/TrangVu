@@ -211,6 +211,8 @@
   margin-bottom: 40px;
   text-transform: uppercase;
   color: #222;
+  text-align: center;
+  width: 100%;
 }
 
 .pd-description-grid {
@@ -311,4 +313,169 @@
   .pd-feature-item {
     width: 90px;
   }
+}
+.product-desc-section {
+  display: flex;
+  gap: 40px;
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: auto;
+  flex-wrap: wrap;
+}
+
+.desc-left {
+  flex: 1 1 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.section-title {
+  width: 100%;
+  align-items: center;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
+}
+
+.desc-icons {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90px;
+  text-align: center;
+}
+
+.icon-item img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+}
+
+.icon-item p {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.desc-info div {
+  margin-bottom: 12px;
+}
+
+.desc-info strong {
+  font-size: 14px;
+  color: #333;
+}
+
+.desc-info p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+  margin-top: 4px;
+}
+
+.made-in {
+  font-size: 14px;
+  font-weight: bold;
+  color: #444;
+}
+
+.desc-right {
+  flex: 1 1 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.desc-right img {
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.review-section {
+  background: #fafafa;
+  padding: 40px 0;
+}
+
+.review-heading {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+.review-layout {
+  display: flex;
+  max-width: 1200px;
+  margin: auto;
+  gap: 40px;
+}
+
+.review-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-search {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.review-filter label,
+.review-checkbox label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.review-content {
+  flex: 3;
+}
+
+.review-summary h3 {
+  font-size: 32px;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.review-sorting {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  font-size: 14px;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-item {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.review-user {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.review-stars {
+  color: #ffc107;
+  margin-bottom: 8px;
 }
