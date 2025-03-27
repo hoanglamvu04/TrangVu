@@ -48,7 +48,28 @@ const ProductDetail = () => {
     if (type === "increase") setQuantity((prev) => prev + 1);
     else if (type === "decrease" && quantity > 1) setQuantity((prev) => prev - 1);
   };
-
+  const reviews = [
+    {
+      name: "Trần Tuấn Kiệt",
+      date: "07.12.2024",
+      content: "Sản phẩm đẹp, giao hàng nhanh chóng, chính sách sau bán hàng tốt",
+      stars: 5
+    },
+    {
+      name: "An Huy Hoàng",
+      date: "24.09.2024",
+      content: "Chiếc tuyệt nhất",
+      stars: 5
+    },
+    {
+      name: "Việt Vũ",
+      date: "15.08.2024",
+      content:
+        "Các sản phẩm chất liệu vải Excool mặc rất thoải mái. Thấm hút mồ hôi tốt, co dãn vừa đủ...",
+      stars: 5
+    }
+  ];
+  
   return (
     <div className="detail-product-wrapper">
       {/* --- Ảnh sản phẩm --- */}
@@ -116,18 +137,127 @@ const ProductDetail = () => {
 
         {/* --- Nút số lượng và giỏ hàng gộp chung --- */}
         <div className="detail-product-actions">
-  <div className="pd-qty-control">
-    <button onClick={() => handleQtyChange("decrease")}>-</button>
-    <span>{quantity}</span>
-    <button onClick={() => handleQtyChange("increase")}>+</button>
+          <div className="pd-qty-control">
+            <button onClick={() => handleQtyChange("decrease")}>-</button>
+            <span>{quantity}</span>
+            <button onClick={() => handleQtyChange("increase")}>+</button>
+          </div>
+          <button className="detail-product-buy-btn">
+            <img src="/assets/icons/icon-cart.svg" alt="cart" />
+            {selectedSize ? "Thêm vào giỏ hàng" : "Chọn kích thước"}
+          </button>
+        </div>
+      </div>
+      <div className="product-desc-section">
+      <h2 className="section-title">MÔ TẢ SẢN PHẨM</h2>
+  <div className="desc-left">
+    <div className="desc-icons">
+      <div className="icon-item">
+        <img src="/assets/icons/absorb.png" alt="Bền bỉ" />
+        <p>Bền bỉ</p>
+      </div>
+      <div className="icon-item">
+        <img src="/assets/icons/comfort.png" alt="Thoải mái" />
+        <p>Thoải mái</p>
+      </div>
+      <div className="icon-item">
+        <img src="/assets/icons/comfort.png" alt="Vừa vặn" />
+        <p>Vừa vặn</p>
+      </div>
+    </div>
+
+    <div className="desc-info">
+      <div>
+        <strong>CHẤT LIỆU</strong>
+        <p>100% Cotton<br />Định lượng vải 220gsm</p>
+      </div>
+      <div>
+        <strong>KIỂU DÁNG</strong>
+        <p>Regular fit<br />
+          Hình in được thiết kế bởi Mr. An Nguyễn (Ryan Nguyen)<br />
+          Mẫu nữ: 1m68 - 50 kg - mặc size S<br />
+          Mẫu nam: 1m73 - 75 kg - mặc size L
+        </p>
+      </div>
+      <div>
+        <strong>PHÙ HỢP</strong>
+        <p>Mặc hàng ngày</p>
+      </div>
+    </div>
+
+    <p className="made-in">* Proudly Made In Vietnam</p>
   </div>
-  <button className="detail-product-buy-btn">
-    <img src="/assets/icons/icon-cart.svg" alt="cart" />
-    {selectedSize ? "Thêm vào giỏ hàng" : "Chọn kích thước"}
-  </button>
+
+  <div className="desc-right">
+    <img src="https://media3.coolmate.me/cdn-cgi/image/quality=80,format=auto/uploads/February2024/AT.220.TIM.4_39_35.jpg" />
+  </div>
+</div>
+<div className="review-section">
+  <h2 className="review-heading">ĐÁNH GIÁ SẢN PHẨM</h2>
+
+  <div className="review-layout">
+    {/* Sidebar bộ lọc */}
+    <div className="review-sidebar">
+      <input type="text" placeholder="Tìm kiếm đánh giá" className="review-search" />
+
+      <div className="review-filter">
+        <p>Phân loại xếp hạng</p>
+        {[5, 4, 3, 2, 1].map((stars) => (
+          <label key={stars}>
+            <input type="checkbox" />
+            {'★'.repeat(stars)}{'☆'.repeat(5 - stars)}
+          </label>
+        ))}
+      </div>
+
+      <div className="review-checkbox">
+        <label>
+          <input type="checkbox" checked />
+          Các review đều đến từ khách hàng đã thực sự mua hàng
+        </label>
+      </div>
+
+      <div className="review-checkbox">
+        <label>
+          <input type="checkbox" />
+          Đã phản hồi
+        </label>
+        <label>
+          <input type="checkbox" />
+          Chỉ có hình ảnh
+        </label>
+      </div>
+    </div>
+
+    {/* Danh sách đánh giá */}
+    <div className="review-content">
+      <div className="review-summary">
+        <h3>5★</h3>
+        <p>Dựa trên 3 đánh giá từ khách hàng</p>
+      </div>
+
+      <div className="review-sorting">
+        <span>Hiển thị đánh giá 1-3</span>
+        <select>
+          <option>Sắp xếp</option>
+        </select>
+      </div>
+
+      <div className="review-list">
+        {reviews.map((item, idx) => (
+          <div key={idx} className="review-item">
+            <p className="review-user">
+              <strong>{item.name}</strong> • {item.date}
+            </p>
+            <div className="review-stars">★★★★★</div>
+            <p>{item.content}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
 </div>
 
-      </div>
     </div>
   );
 };
