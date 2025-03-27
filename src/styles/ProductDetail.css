@@ -1,3 +1,4 @@
+/* === WRAPPER CHUNG === */
 .detail-product-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -197,123 +198,6 @@
 }
 
 /* === MÔ TẢ SẢN PHẨM === */
-.pd-description-wrapper {
-  padding: 60px 20px;
-  background-color: #f9f9f9;
-  border-top: 1px solid #eee;
-  width: 100%;
-}
-
-.pd-description-heading {
-  font-size: 26px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 40px;
-  text-transform: uppercase;
-  color: #222;
-  text-align: center;
-  width: 100%;
-}
-
-.pd-description-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 50px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-.pd-description-content {
-  flex: 1 1 55%;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.pd-feature-icons-row {
-  display: flex;
-  gap: 40px;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-}
-
-.pd-feature-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100px;
-}
-
-.pd-feature-item img {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 8px;
-}
-
-.pd-feature-item p {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  text-align: center;
-}
-
-.pd-benefits-list {
-  list-style: none;
-  padding-left: 16px;
-  font-size: 15px;
-  color: #444;
-  line-height: 2;
-  border-left: 2px solid #e0e0e0;
-}
-
-.pd-benefits-list li {
-  margin-bottom: 6px;
-  position: relative;
-}
-
-.pd-benefits-list li::before {
-  content: "–";
-  color: #555;
-  font-weight: bold;
-  margin-right: 8px;
-}
-
-/* === Ảnh bên phải mô tả === */
-.pd-description-image {
-  flex: 1 1 40%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pd-description-image img {
-  width: 100%;
-  max-width: 450px;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 992px) {
-  .pd-description-grid {
-    flex-direction: column-reverse;
-    align-items: center;
-  }
-
-  .pd-description-content,
-  .pd-description-image {
-    max-width: 100%;
-  }
-
-  .pd-description-heading {
-    font-size: 22px;
-  }
-
-  .pd-feature-item {
-    width: 90px;
-  }
-}
 .product-desc-section {
   display: flex;
   gap: 40px;
@@ -323,20 +207,19 @@
   flex-wrap: wrap;
 }
 
+.section-title {
+  width: 100%;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
+}
+
 .desc-left {
   flex: 1 1 55%;
   display: flex;
   flex-direction: column;
   gap: 30px;
-}
-
-.section-title {
-  width: 100%;
-  align-items: center;
-  text-align: center;
-  font-size: 28px;
-  font-weight: 700;
-  color: #111;
 }
 
 .desc-icons {
@@ -401,7 +284,8 @@
 
 .review-section {
   background: #fafafa;
-  padding: 40px 0;
+  padding: 35px;
+  width: 100%;
 }
 
 .review-heading {
@@ -427,34 +311,57 @@
 }
 
 .review-search {
-  padding: 10px;
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 999px;
   width: 100%;
+  font-size: 15px;
 }
 
 .review-filter label,
 .review-checkbox label {
-  display: block;
-  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
   font-size: 15px;
+  color: #333;
 }
 
 .review-content {
   flex: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .review-summary h3 {
   font-size: 32px;
   color: #000;
-  margin-bottom: 4px;
+  margin: 0;
 }
 
 .review-sorting {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 20px 0;
   font-size: 14px;
+}
+
+.review-sorting select {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  background: #fff;
 }
 
 .review-list {
@@ -472,10 +379,166 @@
 
 .review-user {
   font-size: 16px;
-  margin-bottom: 6px;
+  font-weight: bold;
+  margin-bottom: 4px;
 }
 
 .review-stars {
   color: #ffc107;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.review-comment {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.review-response {
+  background: #f0f0f0;
+  padding: 16px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #333;
+}
+
+.review-response strong {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.review-empty {
+  text-align: center;
+  margin-top: 40px;
+  font-style: italic;
+  color: #666;
+  font-size: 15px;
+}
+
+.review-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #111;
+}
+
+.review-pagination button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: opacity 0.2s;
+}
+
+.review-pagination button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+
+.review-filter {
+  font-weight: bold;
+  color: #888;
+  font-size: 15px;
+}
+
+.review-filter label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  color: #333;
+}
+
+.review-filter input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #000;
+  cursor: pointer;
+}
+
+.review-filter .stars {
+  font-size: 20px;
+  display: flex;
+  gap: 2px;
+  color: #333;
+}
+
+.review-stars {
+  font-size: 20px;
+  color: #ffc107;
+}
+
+.review-checkbox input[type="checkbox"]:checked {
+  accent-color: #2f54eb;
+}
+
+.review-checkbox label,
+.review-filter label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+.review-filter p {
+  font-weight: bold;
+  color: #999;
   margin-bottom: 8px;
+}
+
+.review-checkbox p {
+  font-weight: bold;
+  color: #999;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.verified {
+  background-color: #e8edff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #2f54eb;
+}
+
+.review-star-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #000;
+}
+
+.review-star-filter input[type="checkbox"] {
+  accent-color: #000;
+  cursor: pointer;
+}
+
+.star-icons {
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  color: #000;
+}
+
+.star-count {
+  font-size: 14px;
+  color: #666;
+  margin-left: 6px;
 }
