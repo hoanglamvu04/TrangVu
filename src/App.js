@@ -12,6 +12,7 @@ import AuthPage from "./pages/AuthPage";
 import Category from "./pages/Category";
 import CustomerProfile from "./pages/CustomerProfile";
 import ProductDetail from "./pages/ProductDetail";
+import AdminRoutes from './admin';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/CustomerProfile" element={<CustomerProfile />} />
         <Route path="/order-management" element={<CustomerProfile />} />
+        <Route path="/*" element={<AdminRoutes />} />
       </Routes>
       <Footer />
     </Router>
