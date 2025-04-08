@@ -1,21 +1,12 @@
-const { Sequelize } = require("sequelize");
-require("dotenv").config();
+const mongoose = require('mongoose');
 
-console.log("Connecting to database:", process.env.DB_NAME);  // Debug
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB connected');
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err);
+  }
+};
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME || "shop_thoi_trang",  // Đảm bảo có giá trị
-    process.env.DB_USER || "root",
-    process.env.DB_PASS || "",
-    {
-        host: process.env.DB_HOST || "localhost",
-        dialect: "mysql",
-        logging: false,
-    }
-);
-
-sequelize.authenticate()
-    .then(() => console.log("✅ MySQL connected!"))
-    .catch(err => console.log("❌ Error: " + err));
-
-module.exports = sequelize;
+module.exports = connectDB;
