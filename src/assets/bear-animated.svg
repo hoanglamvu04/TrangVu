@@ -1,0 +1,31 @@
+
+<svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="110" cy="110" r="100" fill="#fff4f8" stroke="#ffb6c1" stroke-width="4"/>
+  
+  <!-- Tai trái -->
+  <circle cx="50" cy="60" r="20" fill="#ffc0cb" stroke="#ff69b4" stroke-width="3"/>
+  <!-- Tai phải -->
+  <circle cx="170" cy="60" r="20" fill="#ffc0cb" stroke="#ff69b4" stroke-width="3"/>
+  
+  <!-- Mặt -->
+  <circle cx="110" cy="110" r="70" fill="#ffe4e1" stroke="#ff69b4" stroke-width="3"/>
+  
+  <!-- Mắt -->
+  <circle cx="90" cy="95" r="6" fill="#3a3a3a"/>
+  <circle cx="130" cy="95" r="6" fill="#3a3a3a"/>
+  
+  <!-- Má hồng -->
+  <circle cx="80" cy="115" r="5" fill="#ff8fa3" opacity="0.5"/>
+  <circle cx="140" cy="115" r="5" fill="#ff8fa3" opacity="0.5"/>
+  
+  <!-- Mũi + Miệng -->
+  <ellipse cx="110" cy="115" rx="4" ry="3" fill="#3a3a3a"/>
+  <path d="M106 120 Q110 125 114 120" stroke="#3a3a3a" stroke-width="2" fill="none"/>
+
+  <!-- Tay che mắt -->
+  <path d="M60 90 Q90 60 100 100" fill="#ffc0cb" stroke="#ff69b4" stroke-width="2" />
+  <path d="M160 90 Q130 60 120 100" fill="#ffc0cb" stroke="#ff69b4" stroke-width="2" />
+  
+  <!-- Text -->
+  <text x="110" y="205" text-anchor="middle" font-size="16" fill="#ff69b4" font-family="sans-serif">Gấu che mắt cute</text>
+</svg>

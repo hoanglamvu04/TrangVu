@@ -8,7 +8,7 @@ import FeaturedBanner from "./components/FeaturedBanner";
 import Footer from "./components/Footer";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
-import AuthPage from "./pages/AuthPage";
+import Login from "./pages/Login";
 import Category from "./pages/Category";
 import CustomerProfile from "./pages/CustomerProfile";
 import ProductDetail from "./pages/ProductDetail";
@@ -29,7 +29,7 @@ function App() {
         } />
         <Route path="/Cart" element={<Cart />} />
         <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/AuthPage" element={<AuthPage />} />
+        <Route path="/Login" element={<Login />} />
         <Route path="/Category" element={<Category />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/CustomerProfile" element={<CustomerProfile />} />

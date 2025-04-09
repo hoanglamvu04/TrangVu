@@ -1,52 +1,107 @@
-import React from "react";
-import "../styles/Login.css";
+import { useRef, useState, FormEvent } from 'react';
+import { useBearImages } from '../hooks/useBearImages';
+import { useBearAnimation } from '../hooks/useBearAnimation';
+import BearAvatar from '../components/BearAvatar';
+import Input from '../components/Input';
+import EyeOn from '../assets/icons/eye_on.svg';
+import EyeOff from '../assets/icons/eye_off.svg';
+import '../styles/Login.css';
 
-const LoginPage = () => {
+export default function LoginForm() {
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const [values, setValues] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { watchBearImages, hideBearImages, peakBearImages } = useBearImages();
+
+  const {
+    currentBearImage,
+    setCurrentFocus,
+    currentFocus,
+    isAnimating,
+  } = useBearAnimation({
+    watchBearImages,
+    hideBearImages,
+    peakBearImages,
+    emailLength: values.email.length,
+    showPassword,
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert('Đăng nhập thành công!');
+  };
+
+  const togglePassword = () => {
+    if (!isAnimating) setShowPassword((prev) => !prev);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === 'email') {
+      const [localPart, domainPart] = value.split('@');
+
+      if (localPart?.length > 64 || domainPart?.length > 50) return;
+    }
+
+    setValues((prev) => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="login-wrapper">
-      <div className="login-container">
-    
-        <div className="login-form">
-          <h2>Chào mừng trở lại!</h2>
-          <p className="sub-text">Đăng nhập để tiếp tục mua sắm</p>
-
-          <form>
-            <div className="input-group">
-              <label>Email / SĐT</label>
-              <input type="text" placeholder="Nhập email hoặc số điện thoại" />
-            </div>
-            <div className="input-group">
-              <label>Mật khẩu</label>
-              <input type="password" placeholder="Nhập mật khẩu" />
-            </div>
-
-            <button className="login-btn">Đăng Nhập</button>
-
-            <div className="social-login">
-              <p>Hoặc đăng nhập bằng:</p>
-              <div className="social-icons">
-                <button className="google-login">Google</button>
-                <button className="facebook-login">Facebook</button>
-              </div>
-            </div>
-
-            <p className="register-link">
-              <a href="/ForgotPassword"> Quên mật khẩu?</a>
-            </p>
-            <p className="register-link">
-              Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
-            </p>
-          </form>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="bear-container">
+          {currentBearImage && (
+            <BearAvatar
+              currentImage={currentBearImage}
+              key={`${currentFocus}-${values.email.length}`}
+            />
+          )}
         </div>
 
-        <div className="login-image">
-          <img src="/assets/images/login-banner.png" alt="Welcome Image" />
-          <h3>Khám phá phong cách của bạn</h3>
-          <p>Chào mừng bạn đến với nền tảng mua sắm hiện đại, tiện lợi!</p>
+        <Input
+          placeholder="Email"
+          name="email"
+          type="email"
+          ref={emailRef}
+          autoFocus
+          onFocus={() => setCurrentFocus('EMAIL')}
+          autoComplete="email"
+          value={values.email}
+          onChange={handleInputChange}
+        />
+
+        <div className="password-container">
+          <input
+            placeholder="Password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            ref={passwordRef}
+            onFocus={() => setCurrentFocus('PASSWORD')}
+            autoComplete="current-password"
+            value={values.password}
+            onChange={handleInputChange}
+            className="form-input input-with-icon"
+          />
+          <button
+            type="button"
+            onClick={togglePassword}
+            className="toggle-button"
+          >
+            <img
+              src={showPassword ? EyeOff : EyeOn}
+              alt="Toggle"
+              className="toggle-icon"
+            />
+          </button>
         </div>
-      </div>
+
+        <button type="submit" className="login-submit-btn">
+          Log In
+        </button>
+      </form>
     </div>
   );
-};
-
-export default LoginPage;
+}

@@ -30,7 +30,7 @@ const Header = () => {
           <button className="search-btn">🔍</button>
         </div>
         <div className="user-actions">
-          <span className="icon" onClick={() => navigate("/AuthPage")} style={{ cursor: "pointer" }}>
+          <span className="icon" onClick={() => navigate("/Login")} style={{ cursor: "pointer" }}>
             👤
           </span>
           <span className="icon" onClick={() => navigate("/CustomerProfile")} style={{ cursor: "pointer" }}>
