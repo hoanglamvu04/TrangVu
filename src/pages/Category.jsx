@@ -10,7 +10,7 @@ const Category = () => {
       <div className="category-container">
         <FilterSidebar />
         <div className="product-section">
-          <h2 className="category-title">SẢN PHẨM NỔI BẬT 0</h2>
+          <h2 className="category-title">SẢN PHẨM NỔI BẬT</h2>
           <div className="product-grid">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />

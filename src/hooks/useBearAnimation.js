@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
+
 export function useBearAnimation({
   watchBearImages,
   hideBearImages,
@@ -54,10 +55,14 @@ export function useBearAnimation({
       const index = Math.floor(cappedLength / step);
       const clampedIndex = Math.min(index, watchBearImages.length - 1);
 
-      if (prevImageIndex.current !== clampedIndex) {
+      if (
+        prevImageIndex.current !== clampedIndex &&
+        clampedIndex < watchBearImages.length
+      ) {
         setCurrentBearImage(watchBearImages[clampedIndex]);
         prevImageIndex.current = clampedIndex;
       }
+      
 
       setIsAnimating(false);
     };
