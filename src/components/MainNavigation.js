@@ -5,7 +5,7 @@ const Menu = () => {
     <div className="nav-scroll-wrapper">
   <nav className="main-nav">
     <a href="#">Trang Chủ</a>
-    <a href="#">Sản Phẩm Nổi Bật</a>
+    <a href="/category/">Sản Phẩm Nổi Bật</a>
     <a href="#">Hàng Mới Về</a>
     <a href="#">Áo Nam</a>
     <a href="#">Áo Nữ</a>
