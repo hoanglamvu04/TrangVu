@@ -37,3 +37,32 @@
   object-fit: cover;
   border-radius: 8px;
 }
+
+.banner-large {
+  position: relative;
+}
+
+.banner-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.6);
+  border: none;
+  font-size: 28px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.banner-arrow.left {
+  left: 10px;
+}
+
+.banner-arrow.right {
+  right: 10px;
+}
+
+.banner-arrow:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
