@@ -1,7 +1,7 @@
 .detail-product-wrapper {
   display: flex;
   flex-wrap: wrap;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 40px auto;
   padding: 0 20px;
   gap: 40px;
@@ -9,13 +9,12 @@
 }
 
 .detail-product-image {
-  flex: 1 1 45%;
   display: flex;
   gap: 20px;
   border-radius: 12px;
-  padding: 20px;
   align-items: flex-start;
   min-height: 370px;
+  width: 500px;
 }
 
 .product-thumbnails {

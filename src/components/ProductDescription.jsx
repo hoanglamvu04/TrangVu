@@ -1,6 +1,5 @@
-// src/components/ProductDescription.jsx
 import React from "react";
-import "../styles/ProductDescription.css"; // nếu bạn muốn style riêng
+import "../styles/ProductDescription.css"; 
 
 const ProductDescription = ({ product }) => {
   return (

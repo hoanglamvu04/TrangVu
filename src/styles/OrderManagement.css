@@ -168,3 +168,9 @@ h2 {
   object-fit: cover;
   border-radius: 5px;
 }
+
+.status-label.chua-xu-ly { background-color: gray; }
+.status-label.da-xac-nhan { background-color: dodgerblue; }
+.status-label.dang-giao { background-color: orange; }
+.status-label.hoan-thanh { background-color: green; }
+.status-label.bi-huy { background-color: crimson; }

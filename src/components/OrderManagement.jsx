@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import "../styles/OrderManagement.css";
 
+const removeVietnameseTones = (str) => {
+  return str.normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/đ/g, "d").replace(/Đ/g, "D")
+    .toLowerCase().replace(/\s+/g, "-");
+};
+
 const OrderManagement = () => {
   const [orders, setOrders] = useState([
     {
@@ -27,8 +34,8 @@ const OrderManagement = () => {
       phone: "0912345678",
       deliveryDate: "20/03/2025",
       items: [
-        { code: "SP003", name: "Giày sneaker", size: "42", color: "Trắng",quantity: 1, price: 650000, link: "/product/SP001"  },
-        { code: "SP004", name: "Balo thời trang", size: "Free size", color: "Đen", quantity: 1, price: 300000, link: "/product/SP001"}
+        { code: "SP003", name: "Giày sneaker", size: "42", color: "Trắng", quantity: 1, price: 650000, link: "/product/SP001" },
+        { code: "SP004", name: "Balo thời trang", size: "Free size", color: "Đen", quantity: 1, price: 300000, link: "/product/SP001" }
       ]
     },
     {
@@ -41,7 +48,7 @@ const OrderManagement = () => {
       phone: "0909876543",
       deliveryDate: "20/03/2025",
       items: [
-        { code: "SP005", name: "Áo hoodie", size: "XL", color: "Ghi",quantity: 1, price: 300000, link: "/product/SP001" },
+        { code: "SP005", name: "Áo hoodie", size: "XL", color: "Ghi", quantity: 1, price: 300000, link: "/product/SP001" },
         { code: "SP006", name: "Mũ len", size: "Free size", color: "Đỏ", quantity: 1, price: 300000, link: "/product/SP001" }
       ]
     }
@@ -49,8 +56,6 @@ const OrderManagement = () => {
 
   const [selectedStatus, setSelectedStatus] = useState("Tất cả");
   const [expandedOrders, setExpandedOrders] = useState([]);
-
-  
 
   const statusCounts = {
     "Chưa xử lý": orders.filter(order => order.status === "Chưa xử lý").length,
@@ -88,12 +93,15 @@ const OrderManagement = () => {
       <h2>Quản Lý Đơn Hàng</h2>
 
       <div className="order-status-summary">
-        {Object.entries(statusCounts).map(([status, count]) => (
-          <button key={status} className={`status-box ${selectedStatus === status ? "active" : ""}`}
-            onClick={() => toggleStatusFilter(status)}>
+      {Object.entries(statusCounts).map(([status, count]) => {
+        const statusClass = `status-box ${selectedStatus === status ? "active" : ""} ${removeVietnameseTones(status)}`;
+        return (
+          <button key={status} className={statusClass} onClick={() => toggleStatusFilter(status)}>
             {status} <span>({count})</span>
           </button>
-        ))}
+        );
+      })}
+
       </div>
 
       <table className="order-table">
@@ -114,7 +122,7 @@ const OrderManagement = () => {
                 <td>{order.date}</td>
                 <td>{order.total}</td>
                 <td>
-                  <span className={`status-label ${order.status.toLowerCase().replace(" ", "-")}`}>
+                  <span className={`status-label ${removeVietnameseTones(order.status)}`}>
                     {order.status}
                   </span>
                 </td>
@@ -145,7 +153,7 @@ const OrderManagement = () => {
                         <table className="product-table">
                           <thead>
                             <tr>
-                            <th>Mã SP</th>
+                              <th>Mã SP</th>
                               <th>Tên SP</th>
                               <th>Size</th>
                               <th>Màu</th>
@@ -158,13 +166,7 @@ const OrderManagement = () => {
                             {order.items.map((item, index) => (
                               <tr key={index}>
                                 <td>{item.code}</td>
-                                <td>
-                                  <a 
-                                    href={item.link} 
-                                  >
-                                    {item.name}
-                                  </a>
-                                </td>
+                                <td><a href={item.link}>{item.name}</a></td>
                                 <td>{item.size}</td>
                                 <td>{item.color}</td>
                                 <td>{item.quantity}</td>

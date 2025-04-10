@@ -135,6 +135,7 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  margin-bottom: 20px;
 }
 
 .address-card {
@@ -246,4 +247,55 @@ h2 {
   border-radius: 5px;
   background: black;
   color: white;
+}
+
+.address-picker-row select {
+  font-size: 15px;       
+  padding: 10px 12px;      
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-right: 10px;
+  min-width: 180px;        
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.address-picker-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.address-form input[type="text"] {
+  width: 100%; 
+  padding: 10px;
+  margin: 8px 0;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.address-form select {
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 8px 4px;
+  min-width: 200px;
+}
+
+.change-password-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.cancel-btn {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
 }
