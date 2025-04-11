@@ -1,15 +1,17 @@
 .featured-banner {
     position: relative;
     width: 100%;
-    max-width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
     overflow: hidden;
-    padding: 0 15px 0 15px;
 }
 
 .featured-banner-image {
     width: 100%;
     height: auto;
     display: block;
+    max-width: 1600px;
+    margin: 0 auto;
     border-radius: 10px;
 }
 
@@ -19,6 +21,8 @@
     left: 5%;
     color: white;
     text-align: left;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
 .featured-banner-content h2 {
