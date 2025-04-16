@@ -2,13 +2,6 @@
     position: relative;
     width: 100%;
     max-width: 1600px;
-<<<<<<< HEAD
-    overflow: hidden;
-    margin: 0 auto;
-=======
-    margin: 0 auto;
-    overflow: hidden;
->>>>>>> 3d35f218dd54eaedf564243e1dc866218b9ba7eb
 }
 
 .featured-banner-image {
