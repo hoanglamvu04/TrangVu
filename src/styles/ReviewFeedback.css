@@ -1,0 +1,128 @@
+.review-feedback {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .review-feedback h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #222;
+  }
+  
+  .review-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .form-row select {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .rating-row {
+    margin-bottom: 15px;
+  }
+  
+  .star {
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .star:hover {
+    transform: scale(1.2);
+  }
+  
+  .star.selected {
+    color: orange;
+  }
+  
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    resize: vertical;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    font-size: 14px;
+  }
+  
+  input[type="file"] {
+    margin-bottom: 15px;
+  }
+  
+  .submit-btn {
+    background: #ff5c00;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .submit-btn:hover {
+    background: #e14f00;
+  }
+  
+  .review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .review-item {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 5px solid #ff5c00;
+  }
+  
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .review-stars {
+    margin-bottom: 6px;
+  }
+  
+  .review-image {
+    width: 100px;
+    margin-top: 10px;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+  
+  .status-tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+  }
+  
+  .status-tag.chờ-duyệt {
+    background: gray;
+  }
+  
+  .status-tag.đã-duyệt {
+    background: green;
+  }
+  

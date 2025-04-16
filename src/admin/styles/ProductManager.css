@@ -1,0 +1,97 @@
+.detail-form {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .detail-form h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .detail-form input,
+  .detail-form select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border 0.3s;
+  }
+  
+  .detail-form input:focus,
+  .detail-form select:focus {
+    border-color: #0066ff;
+    outline: none;
+  }
+  
+  .color-picker {
+    margin-bottom: 15px;
+  }
+  
+  .color-picker label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #444;
+  }
+  
+  .color-options {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .color-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, border 0.2s;
+    padding: 6px;
+    border-radius: 6px;
+  }
+  
+  .color-item:hover {
+    transform: scale(1.05);
+  }
+  
+  .color-item.selected {
+    background-color: #e6f0ff;
+    border: 1px solid #0066ff;
+  }
+  
+  .dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    margin-bottom: 4px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .color-item span {
+    font-size: 13px;
+    color: #333;
+  }
+  
+  .detail-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0066ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .detail-form button:hover {
+    background-color: #0052cc;
+  }
+  

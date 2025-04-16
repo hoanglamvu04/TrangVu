@@ -1,27 +1,50 @@
-import React from "react";
-import "../styles/ProductDescription.css"; 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "../styles/ProductDescription.css";
+
+const API_URL = "http://localhost:5000";
 
 const ProductDescription = ({ product }) => {
-  return (
-    <div className="product-description-section">
-      <h2 className="description-title">MÔ TẢ SẢN PHẨM</h2>
+  const [descriptions, setDescriptions] = useState([]);
 
-      <div className="description-hero">
-        <div className="hero-text">
-          <h3>{product.name}</h3>
-          <p>{product.mainDescription}</p>
-        </div>
-        <div className="hero-image">
-          <img src={product.heroImage} alt="Mô tả sản phẩm" />
-        </div>
+  useEffect(() => {
+    const fetchDescriptions = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/product-descriptions/${product.code}`);
+        setDescriptions(res.data || []);
+      } catch (error) {
+        console.error("Lỗi khi tải mô tả sản phẩm:", error);
+      }
+    };
+
+    if (product?.code) fetchDescriptions();
+  }, [product]);
+
+  if (!descriptions || descriptions.length === 0) {
+    return (
+      <div className="product-description">
+        <h2 className="desc-title">MÔ TẢ SẢN PHẨM</h2>
+        <p style={{ padding: "20px", textAlign: "center" }}>{product.name}</p>
+        <img src="/assets/no-description.png" alt="Mô tả sản phẩm" style={{ margin: "0 auto", maxHeight: 300 }} />
       </div>
+    );
+  }
 
-      <div className="description-features">
-        {product.descriptionItems?.map((item, idx) => (
-          <div key={idx} className="feature-box">
-            <img src={item.image} alt={item.title} />
-            <h4>{item.title}</h4>
-            <p>{item.text}</p>
+  return (
+    <div className="product-description">
+      <h2 className="desc-title">MÔ TẢ SẢN PHẨM</h2>
+      <div className="description-grid">
+        {descriptions.map((desc, idx) => (
+          <div className="description-card" key={idx}>
+            <h3 className="desc-section">{desc.title}</h3>
+            <p className="desc-content">{desc.content}</p>
+            {desc.image && (
+              <img
+                src={`${API_URL}${desc.image}`}
+                alt={desc.title}
+                className="desc-image"
+              />
+            )}
           </div>
         ))}
       </div>

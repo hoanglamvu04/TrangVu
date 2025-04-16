@@ -23,7 +23,7 @@
 }
 
 .product-image-wrapper img {
-  width: 100%;
+  width: 310px;
   height: 100%;
   object-fit: cover; 
   transition: transform 0.3s ease;

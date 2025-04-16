@@ -1,92 +1,55 @@
-.product-description-section {
-  margin: 60px auto;
-  padding: 0 16px;
-  max-width: 1100px;
+.product-description {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.description-title {
-  font-size: 22px;
+.desc-title {
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
   margin-bottom: 32px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
-.description-hero {
+.description-grid {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #f3f4f6;
-  border-radius: 12px;
-  padding: 40px;
-  margin-bottom: 40px;
-}
-
-.hero-text {
-  flex: 1;
-  min-width: 250px;
-  margin-right: 20px;
-}
-
-.hero-text h3 {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.hero-text p {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #333;
-}
-
-.hero-image {
-  flex: 1;
-  min-width: 250px;
-  text-align: center;
-}
-
-.hero-image img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
-.description-features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  justify-content: center;
   gap: 24px;
+  flex-wrap: wrap;
 }
 
-.feature-box {
-  text-align: center;
-  padding: 16px;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  background-color: #fff;
-  transition: box-shadow 0.3s ease;
-}
-
-.feature-box:hover {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.feature-box img {
+.description-card {
   width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 12px;
+  max-width: 320px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
 }
 
-.feature-box h4 {
+.description-card:hover {
+  transform: translateY(-5px);
+}
+
+.desc-section {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.feature-box p {
+.desc-content {
   font-size: 15px;
-  color: #555;
+  color: #444;
+  margin-bottom: 12px;
+}
+
+.desc-image {
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #eee;
 }

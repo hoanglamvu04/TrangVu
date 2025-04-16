@@ -1,0 +1,48 @@
+.admin-sidebar {
+  width: 100%;
+  background-color: #fff;
+  padding: 0;
+  border-bottom: 1px solid #ddd;
+  min-width: 1000px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.admin-sidebar-title {
+  font-size: 18px;
+  border-bottom: 1px solid #eee;
+  margin: 0;
+  padding: 12px 20px;
+}
+
+.admin-sidebar-nav-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.admin-sidebar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  white-space: nowrap;
+  min-width: max-content;
+  padding: 12px 20px;
+}
+
+.admin-sidebar-nav a {
+  text-decoration: none;
+  color: #333;
+  border-radius: 6px;
+  transition: 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.admin-sidebar-nav a.active {
+  color: #007bff;
+  font-weight: bold;
+  border-bottom: 2px solid #007bff;
+}
+
+.admin-sidebar-nav a:hover {
+  background-color: #f0f0f0;
+}

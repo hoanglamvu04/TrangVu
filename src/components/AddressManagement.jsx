@@ -65,7 +65,7 @@ const AddressManagement = () => {
               <strong>{addr.label}</strong>
               <p>{addr.address}</p>
             </div>
-            <div className="address-actions">
+            <div className="anddress-actios">
               <FaEdit className="edit-icon" onClick={() => handleEditAddress(index)} />
               <FaTrash className="delete-icon" onClick={() => handleDeleteAddress(addr.id)} />
             </div>

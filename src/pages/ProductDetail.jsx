@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import "../styles/ProductDetail.css";
 import ProductCard from "../components/ProductCard";
-import products from "../data/products";
 import reviews from "../data/reviews";
 import ProductDescription from "../components/ProductDescription";
 
+const API_URL = "http://localhost:5000";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
+  const [details, setDetails] = useState([]);
 
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -22,23 +25,37 @@ const ProductDetail = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
 
-  // Cập nhật sản phẩm mỗi khi id thay đổi
   useEffect(() => {
-    const foundProduct = products.find((p) => p.id === parseInt(id));
-    setProduct(foundProduct);
-    if (foundProduct) {
-      setSelectedImage(foundProduct.images?.[0] || foundProduct.image);
-      setSelectedColor(foundProduct.colors?.[0]?.code || "");
-      setSelectedSize(null);
-      setQuantity(1);
-    }
+    const fetchData = async () => {
+      try {
+        const resProduct = await axios.get(`${API_URL}/api/products`);
+        const all = resProduct.data;
+        setAllProducts(all);
+        const found = all.find((p) => p.code === id || p._id === id);
+        setProduct(found);
 
-    setSelectedStar(null);
-    setSortOrder("desc");
-    setFilterImage("");
-    setCurrentPage(1);
+        if (!found) return;
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+        const resDetail = await axios.get(`${API_URL}/api/product-details/${found.code}`);
+        setDetails(resDetail.data);
+
+        const imgFull = found.image.startsWith("http") ? found.image : `${API_URL}${found.image}`;
+        setSelectedImage(imgFull);
+        setSelectedColor(""); // ❗ Không tự động chọn màu
+        setSelectedSize(null);
+        setQuantity(1);
+
+        setSelectedStar(null);
+        setSortOrder("desc");
+        setFilterImage("");
+        setCurrentPage(1);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        console.error("Lỗi khi tải dữ liệu:", err);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
   useEffect(() => {
@@ -46,6 +63,41 @@ const ProductDetail = () => {
   }, [selectedStar, filterImage, sortOrder]);
 
   if (!product) return <h2>Không tìm thấy sản phẩm</h2>;
+
+  // === Tạo danh sách màu duy nhất ===
+  const uniqueColors = [];
+  const seen = new Set();
+  details.forEach((d) => {
+    if (!seen.has(d.colorCode)) {
+      seen.add(d.colorCode);
+      uniqueColors.push({
+        code: d.colorCode,
+        name: d.colorName,
+        image: d.image ? `${API_URL}${d.image}` : `${API_URL}${product.image}`,
+      });
+    }
+  });
+
+  const availableSizes = details
+    .filter((d) => d.colorCode === selectedColor)
+    .map((d) => d.size);
+
+  const sizeStock = {};
+  details.forEach((d) => {
+    if (d.colorCode === selectedColor) {
+      sizeStock[d.size] = d.quantity;
+    }
+  });
+
+  const getSelectedColorName = () => {
+    return uniqueColors.find((c) => c.code === selectedColor)?.name || "";
+  };
+
+  const mainImage = selectedColor
+    ? uniqueColors.find((c) => c.code === selectedColor)?.image || `${API_URL}${product.image}`
+    : `${API_URL}${product.image}`;
+
+  const thumbnails = [mainImage];
 
   const filteredReviews = reviews
     .filter((r) => (selectedStar ? r.rating === selectedStar : true))
@@ -63,7 +115,7 @@ const ProductDetail = () => {
   const paginatedReviews = filteredReviews.slice(startIndex, startIndex + reviewsPerPage);
 
   const handleSizeClick = (size) => {
-    if (product.sizeStock[size] > 0) {
+    if (sizeStock[size] > 0) {
       setSelectedSize(size === selectedSize ? null : size);
     }
   };
@@ -72,27 +124,18 @@ const ProductDetail = () => {
     setQuantity((prev) => (type === "increase" ? prev + 1 : prev > 1 ? prev - 1 : 1));
   };
 
-  const getSuggestedProducts = (currentProduct, productList) => {
-    const sameCategory = productList.filter(
-      (p) =>
-        p.id !== currentProduct.id &&
-        p.category === currentProduct.category &&
-        (parseFloat(p.rating) >= 4.5 || p.sold >= 100)
-    );
-    return sameCategory.sort(() => 0.5 - Math.random()).slice(0, 4);
-  };
-
-  const getSelectedColorName = () => {
-    return product.colors?.find((color) => color.code === selectedColor)?.name || "";
-  };
-
-  const suggestedProducts = getSuggestedProducts(product, products);
+  const suggestedProducts = allProducts
+  .filter((p) =>
+    p.code !== product.code &&
+    p.category?.toString() === product.category?.toString() 
+  )
+    .slice(0, 4);
 
   return (
     <div className="detail-product-wrapper">
       <div className="detail-product-image">
         <div className="product-thumbnails">
-          {product.images?.map((img, idx) => (
+          {thumbnails.map((img, idx) => (
             <img
               key={idx}
               src={img}
@@ -110,12 +153,22 @@ const ProductDetail = () => {
       <div className="detail-product-info">
         <h1 className="detail-product-title">{product.name}</h1>
         <div className="detail-product-rating">
-          ★ {product.rating} <span>({product.reviews} đánh giá)</span>
+          ★ {product.rating || 5.0} <span>({product.reviews || 0} đánh giá)</span>
         </div>
         <div className="product-prices">
-          {product.currentPrice && <span className="current-price">{product.currentPrice}đ</span>}
-          {product.oldPrice && <span className="old-price">{product.oldPrice}đ</span>}
-          {product.discount && <span className="discount-badge">-{product.discount}%</span>}
+          {product.finalPrice && (
+            <span className="current-price">
+              {Number(product.finalPrice).toLocaleString()}đ
+            </span>
+          )}
+          {product.originalPrice && product.discount > 0 && (
+            <span className="old-price">
+              {Number(product.originalPrice).toLocaleString()}đ
+            </span>
+          )}
+          {product.discount > 0 && (
+            <span className="discount-badge">-{product.discount}%</span>
+          )}
         </div>
 
         <div>🚚 Giao hàng nhanh trong 1-3 ngày tại TP.HCM và Hà Nội</div>
@@ -126,8 +179,8 @@ const ProductDetail = () => {
             Màu sắc: <strong>{getSelectedColorName()}</strong>
           </label>
           <div className="color-options">
-            {product.colors?.map((color, idx) => {
-              const isWhite = color.code.toLowerCase() === "#ffffff" || color.name.toLowerCase().includes("trắng");
+            {uniqueColors.map((color, idx) => {
+              const isWhite = color.code.toLowerCase() === "#ffffff";
               return (
                 <div key={idx} className="color-wrapper">
                   <span
@@ -136,11 +189,11 @@ const ProductDetail = () => {
                     onClick={() => {
                       if (selectedColor === color.code) {
                         setSelectedColor("");
-                        setSelectedImage(product.images?.[0] || product.image);
+                        setSelectedImage(`${API_URL}${product.image}`);
                       } else {
                         setSelectedColor(color.code);
-                        const img = product.colorImages?.[color.code] || product.image;
-                        setSelectedImage(img);
+                        setSelectedImage(color.image);
+                        setSelectedSize(null);
                       }
                     }}
                   ></span>
@@ -152,12 +205,12 @@ const ProductDetail = () => {
 
         <div className="detail-product-size-label">Kích thước:</div>
         <div className="detail-product-sizes">
-          {product.sizes?.map((size) => (
+          {availableSizes.map((size) => (
             <div
               key={size}
               className={`detail-product-size-option 
                 ${selectedSize === size ? "selected" : ""} 
-                ${product.sizeStock[size] === 0 ? "out-of-stock" : ""}`}
+                ${sizeStock[size] === 0 ? "out-of-stock" : ""}`}
               onClick={() => handleSizeClick(size)}
             >
               {size}
@@ -179,135 +232,12 @@ const ProductDetail = () => {
       </div>
 
       <ProductDescription product={product} />
-      
-            {/* === Đánh giá === */}
-            <div className="review-section">
-        <h2 className="review-heading">ĐÁNH GIÁ SẢN PHẨM</h2>
-        <div className="review-layout">
-          <div className="review-sidebar">
-            <input type="text" placeholder="Tìm kiếm đánh giá" className="review-search" />
-            <div className="review-filter">
-              <p>Phân loại xếp hạng</p>
-              {[5, 4, 3, 2, 1].map((stars) => (
-                <label key={stars} className="review-star-filter">
-                  <input
-                    type="checkbox"
-                    checked={selectedStar === stars}
-                    onChange={() => {
-                      setSelectedStar((prev) => (prev === stars ? null : stars));
-                      setCurrentPage(1);
-                    }}
-                  />
-                  <span className="star-icons">
-                    {"⭐".repeat(stars)}
-                    <span className="star-count">({reviews.filter((r) => r.rating === stars).length})</span>
-                  </span>
-                </label>
-              ))}
-            </div>
 
-            <div className="review-checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={filterImage === "hasImage"}
-                  onChange={() => setFilterImage(filterImage === "hasImage" ? "" : "hasImage")}
-                />{" "}
-                Kèm hình ảnh
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={filterImage === "noImage"}
-                  onChange={() => setFilterImage(filterImage === "noImage" ? "" : "noImage")}
-                />{" "}
-                Không kèm hình ảnh
-              </label>
-            </div>
-          </div>
-
-          <div className="review-content">
-            <div className="review-summary">
-              <h3>{product.rating}⭐</h3>
-              <p>Dựa trên {filteredReviews.length} đánh giá từ khách hàng</p>
-            </div>
-            <div className="review-sorting">
-              <span>
-                Hiển thị {startIndex + 1}-{Math.min(startIndex + reviewsPerPage, filteredReviews.length)}
-              </span>
-              <select onChange={(e) => setSortOrder(e.target.value)} value={sortOrder}>
-                <option value="desc">Đánh giá: Cao đến thấp</option>
-                <option value="asc">Đánh giá: Thấp đến cao</option>
-              </select>
-            </div>
-
-            {paginatedReviews.length > 0 ? (
-              <>
-                <div className="review-list">
-                  {paginatedReviews.map((item) => (
-                    <div key={item.id} className="review-item">
-                      <p className="review-user">
-                        <strong>{item.name}</strong> • {item.date}
-                      </p>
-                      <div className="review-stars">{"⭐".repeat(item.rating)}</div>
-                      <p>{item.comment}</p>
-                      {item.images?.length > 0 && (
-                        <div className="review-images" style={{ display: "flex", gap: 10 }}>
-                          {item.images.map((img, idx) => (
-                            <img
-                              key={idx}
-                              src={img}
-                              alt="Ảnh đánh giá"
-                              style={{ width: 100, height: 100, borderRadius: 4 }}
-                            />
-                          ))}
-                        </div>
-                      )}
-                      {item.hasReply && (
-                        <div
-                          className="review-reply"
-                          style={{ background: "#f3f4f6", padding: 12, borderRadius: 8, marginTop: 10 }}
-                        >
-                          <strong>Phản hồi từ COOLMATE</strong>
-                          <p>{item.reply}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="review-pagination" style={{ textAlign: "center", marginTop: 20 }}>
-                    <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-                      &lt;
-                    </button>
-                    <span style={{ margin: "0 10px" }}>
-                      {currentPage} / {totalPages}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                    >
-                      &gt;
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="review-empty">
-                <p>Chưa có đánh giá</p>
-                <em>Hãy mua và đánh giá sản phẩm này nhé!</em>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* === GỢI Ý SẢN PHẨM === */}
       <div className="suggested-products">
         <h2 className="suggested-title">GỢI Ý SẢN PHẨM</h2>
         <div className="suggested-grid">
           {suggestedProducts.map((item) => (
-            <ProductCard key={item.id} product={item} />
+            <ProductCard key={item._id} product={item} />
           ))}
         </div>
       </div>

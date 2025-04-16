@@ -11,8 +11,8 @@ const Banner = () => {
   ];
 
   const smallImages = [
- "https://i.pinimg.com/736x/16/c2/67/16c26755cbd7a7daf21ebd6923705b80.jpg",
- "https://i.pinimg.com/736x/16/c2/67/16c26755cbd7a7daf21ebd6923705b80.jpg"
+ "https://cf.shopee.vn/file/vn-11134258-7ra0g-m8ebw7jhjaro9e_xhdpi",
+ "https://cf.shopee.vn/file/vn-11134258-7ra0g-m8ebw7jhjaro9e_xhdpi"
   ];
 
   const handlePrev = () => {

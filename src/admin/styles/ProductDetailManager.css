@@ -1,0 +1,77 @@
+.product-detail-form {
+  padding: 20px;
+  max-width: 700px;
+  margin: auto;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.product-detail-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.product-detail-input,
+.product-detail-select,
+.product-detail-file {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.product-detail-file {
+  padding: 5px;
+}
+
+.product-detail-color-picker label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.product-detail-color-options {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.product-detail-color-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.product-detail-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-bottom: 5px;
+}
+
+.product-detail-color-item.selected .product-detail-dot {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.product-detail-submit {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.product-detail-submit:hover {
+  background-color: #0056b3;
+}

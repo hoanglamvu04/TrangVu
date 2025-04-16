@@ -1,0 +1,85 @@
+
+.order-manager-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.order-manager-page h2 {
+  margin-bottom: 20px;
+}
+
+.order-filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #fff;
+}
+
+.filter-btn.all { background-color: #666; }
+.filter-btn.pending { background-color: #999; }
+.filter-btn.processing { background-color: #007bff; }
+.filter-btn.shipped { background-color: orange; color: #000; }
+.filter-btn.delivered { background-color: green; }
+.filter-btn.cancelled { background-color: crimson; }
+
+.filter-btn.active {
+  outline: 3px solid #000;
+}
+
+.add-order-btn {
+  margin-left: auto;
+  background-color: green;
+  color: white;
+  padding: 8px 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.order-manager-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.order-manager-table th,
+.order-manager-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.order-manager-table th {
+  background-color: #f2f2f2;
+}
+
+.order-status-dropdown {
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.order-action-buttons button {
+  margin: 2px;
+  padding: 5px 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.order-btn.detail { background-color: #17a2b8; color: white; }
+.order-btn.address { background-color: #6c757d; color: white; }
+.order-btn.edit { background-color: #ffc107; color: black; }
+.order-btn.delete { background-color: #dc3545; color: white; }

@@ -1,9 +1,9 @@
 .featured-banner {
     position: relative;
     width: 100%;
-    max-width: 100%;
+    max-width: 1600px;
     overflow: hidden;
-    padding: 0 15px 0 15px;
+    margin: 0 auto;
 }
 
 .featured-banner-image {

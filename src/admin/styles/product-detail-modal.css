@@ -1,0 +1,198 @@
+/* Modal Container */
+.modal-product-detail {
+    max-width: 850px;
+    margin: auto;
+    padding: 24px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+  
+  .modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Accordion Color Summary Box */
+  .color-accordion {
+    margin-bottom: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+  }
+  
+  .color-summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .color-label {
+    position: relative;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #fff;
+    min-width: 120px;
+    display: inline-block;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .color-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #fff;
+    color: #333;
+    border-radius: 10px;
+    font-size: 11px;
+    padding: 2px 6px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Table Styling */
+  .color-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    background-color: #fff;
+  }
+  
+  .color-table th,
+  .color-table td {
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .color-table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  /* Form Styling */
+  .form-section {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+  }
+  
+  .form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  
+  .form-group input {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  input[type="file"] {
+    padding: 4px;
+  }
+  
+  /* Button Styles */
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+  
+  .btn-add {
+    background-color: #1976d2;
+    color: #fff;
+  }
+  
+  .btn-submit {
+    background-color: #2e7d32;
+    color: #fff;
+  }
+  
+  .btn-cancel {
+    background-color: #888;
+    color: #fff;
+  }
+  
+  .btn-edit {
+    background-color: #0288d1;
+    color: #fff;
+    font-size: 13px;
+    padding: 6px 12px;
+    margin-right: 6px;
+  }
+  
+  .btn-delete {
+    background-color: #d32f2f;
+    color: #fff;
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  
+  .btn-close {
+    margin-top: 20px;
+    background-color: #666;
+    color: white;
+    padding: 8px 16px;
+  }
+  
+  .multi-size-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  
+  .size-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+    position: relative;
+  }
+  
+  .size-option input[type="checkbox"] {
+    display: none;
+  }
+  
+  .size-option.selected {
+    background-color: #333;
+    color: white;
+    border-color: #333;
+  }
+  

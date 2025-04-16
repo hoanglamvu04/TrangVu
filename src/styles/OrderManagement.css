@@ -174,3 +174,28 @@ h2 {
 .status-label.dang-giao { background-color: orange; }
 .status-label.hoan-thanh { background-color: green; }
 .status-label.bi-huy { background-color: crimson; }
+
+.status-box.chua-xu-ly {
+  background-color: gray;
+  color: white;
+}
+
+.status-box.da-xac-nhan {
+  background-color: dodgerblue;
+  color: white;
+}
+
+.status-box.dang-giao {
+  background-color: orange;
+  color: black;
+}
+
+.status-box.hoan-thanh {
+  background-color: green;
+  color: white;
+}
+
+.status-box.bi-huy {
+  background-color: crimson;
+  color: white;
+}

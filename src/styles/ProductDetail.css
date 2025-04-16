@@ -545,22 +545,29 @@
 }
 
 .suggested-products {
-  padding: 20px;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
 }
 
 .suggested-title {
-  font-size: 24px;
-  font-weight: bold;
+  text-align: center;
   margin-bottom: 16px;
 }
 
 .suggested-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+  gap: 24px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+  justify-items: center; 
 }
+
+
 
 @media (max-width: 1024px) {
   .suggested-grid {

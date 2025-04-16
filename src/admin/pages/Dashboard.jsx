@@ -1,11 +1,12 @@
+import React from "react";
+
 const Dashboard = () => {
-    return (
-      <div>
-        <h2 className="page-title">Tổng quan hệ thống</h2>
-        <p className="page-description">Chào mừng bạn đến với trang quản trị TV_Fashion 🎉</p>
-      </div>
-    );
-  };
-  
-  export default Dashboard;
-  
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Chào mừng đến trang Quản trị</h1>
+      <p>Chọn chức năng bên trái để bắt đầu quản lý.</p>
+    </div>
+  );
+};
+
+export default Dashboard;

@@ -11,30 +11,38 @@ import Wishlist from "./pages/Wishlist";
 import Category from "./pages/Category";
 import CustomerProfile from "./pages/CustomerProfile";
 import ProductDetail from "./pages/ProductDetail";
-import AdminRoutes from './admin';
-
+import AdminRoutes from './admin'; 
 function App() {
   return (
     <Router>
-      <Header />
-      <MainNavigation />
       <Routes>
-        <Route path="/" element={
+        <Route path="/admin/*" element={<AdminRoutes />} />
+        
+        <Route path="*" element={
           <>
-            <Banner />
-            <ProductCategories />
-            <FeaturedBanner />
+            <Header />
+            <MainNavigation />
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <Banner />
+                  <ProductCategories />
+                  <FeaturedBanner />
+                </>
+              } />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/category" element={<Category />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/CustomerProfile" element={<CustomerProfile />} />
+              <Route path="/order-management" element={<CustomerProfile />} />
+              <Route path="/address-management" element={<CustomerProfile />} />
+              <Route path="/review-feedback" element={<CustomerProfile />} />
+            </Routes>
+            <Footer />
           </>
         } />
-        <Route path="/Cart" element={<Cart />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/Category" element={<Category />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/CustomerProfile" element={<CustomerProfile />} />
-        <Route path="/order-management" element={<CustomerProfile />} />
-        <Route path="/*" element={<AdminRoutes />} />
       </Routes>
-      <Footer />
     </Router>
   );
 }

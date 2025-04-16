@@ -1,31 +1,39 @@
-const express = require('express');
-const mongoose = require('mongoose');
-require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
 
-const connectDB = require('./config/database');
-const Customer = require('./models/Customer');
+const app = express();
 
-const app = express(); // ✅ dòng này là quan trọng nhất
+app.use(cors({
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
-app.use(express.json()); // Cho phép đọc JSON từ req.body
+app.use(express.json());
+const productDetailRoutes = require("./routes/productDetail");
+const adminUsersRoutes = require("./routes/adminUsers");
+const authRoutes = require("./routes/auth");
+const categoryRoutes = require("./routes/category");
+const productRoutes = require("./routes/product");
+const adminOrdersRoute = require("./routes/adminOrders");
+const productDescriptionRoutes = require("./routes/productDescription");
 
-connectDB(); // Kết nối MongoDB
 
-// Route thử
-app.get('/api/test-create', async (req, res) => {
-  try {
-    const newCustomer = new Customer({
-      name: 'Sơn 99',
-      email: 'son@example.com'
-    });
+app.use("/api/admin/users", adminUsersRoutes);
+app.use("/api/product-details", productDetailRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/admin/orders", adminOrdersRoute);
+app.use("/api/product-descriptions", productDescriptionRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-    await newCustomer.save();
-    res.send('✅ Tạo khách hàng thành công!');
-  } catch (err) {
-    res.status(500).send('❌ Lỗi tạo khách hàng');
-  }
+app.get("/", (req, res) => {
+  res.send("Lâm Vũ Nè 🚀");
 });
 
-// Chạy server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});

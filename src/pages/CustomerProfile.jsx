@@ -3,56 +3,91 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/CustomerProfile.css";
 import OrderManagement from "../components/OrderManagement";
 import AddressManagement from "../components/AddressManagement";
+import ReviewFeedback from "../components/ReviewFeedback";
+import axios from "axios";
+
 
 import {
   FaUser, FaShoppingBag, FaWallet, FaMapMarkerAlt,
   FaRegStar, FaSignOutAlt, FaChevronRight
 } from "react-icons/fa";
 
+const API_URL = process.env.REACT_APP_API_URL;
+console.log("🌐 API_URL = ", API_URL);
+
 const CustomerProfile = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const [selectedTab, setSelectedTab] = useState("profile");
+  const [customer, setCustomer] = useState(null);
 
   useEffect(() => {
     if (location.pathname === "/order-management") {
       setSelectedTab("orders");
+    } else if (location.pathname === "/review-feedback") {
+      setSelectedTab("feedback");
+    } else if (location.pathname === "/CustomerProfile") {
+      setSelectedTab("profile");
     }
   }, [location]);
 
-  const [customer, setCustomer] = useState({
-    avatar: "/assets/images/avt-test.png",
-    username: "lamvu123",
-    fullName: "Hoàng Lâm Vũ",
-    email: "hoanglamvuytb@gmail.com",
-    phone: "0376531093",
-    status: "Hoạt động",
-    createdAt: "20/09/2004",
-  });
+  useEffect(() => {
+    const storedCustomer = localStorage.getItem("customer");
+    if (storedCustomer) {
+      setCustomer(JSON.parse(storedCustomer));
+    }
+  }, []);
 
   const [editMode, setEditMode] = useState(false);
-  const [fullName, setFullName] = useState(customer.fullName);
-  const [email, setEmail] = useState(customer.email);
-  const [phone, setPhone] = useState(customer.phone);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
-
   const [changePwdMode, setChangePwdMode] = useState(false);
   const [oldPwd, setOldPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
   const [confirmPwd, setConfirmPwd] = useState("");
 
-  const handleSave = () => {
-    setCustomer({
-      ...customer,
-      fullName,
-      email,
-      phone,
-      avatar: avatarFile ? URL.createObjectURL(avatarFile) : customer.avatar
-    });
-    setEditMode(false);
-  };
+  useEffect(() => {
+    if (customer) {
+      setFullName(customer.fullName);
+      setEmail(customer.email);
+      setPhone(customer.phoneNumber);
+      setBirthDate(customer.birthDate ? new Date(customer.birthDate).toISOString().split("T")[0] : "");
+    }
+  }, [customer]);
 
+  const handleSave = async () => {
+    try {
+      let avatarPath = customer.avatar;
+  
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append("avatar", avatarFile);
+  
+        const res = await axios.post("http://localhost:5000/api/auth/upload-avatar", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        avatarPath = res.data.filePath;
+      }
+  
+      const updateRes = await axios.put(`http://localhost:5000/api/auth/update/${customer._id}`, {
+        fullName,
+        phoneNumber: phone,
+        birthDate,
+        avatar: avatarPath,
+      });
+  
+      alert("Cập nhật thông tin thành công!");
+      setCustomer(updateRes.data.user);
+      localStorage.setItem("customer", JSON.stringify(updateRes.data.user));
+      setEditMode(false);
+    } catch (err) {
+      alert("Lỗi khi cập nhật: " + (err.response?.data?.message || err.message));
+    }
+  };
+  
   const handleChangePassword = () => {
     if (newPwd.length < 6) return alert("Mật khẩu mới phải có ít nhất 6 ký tự");
     if (oldPwd === newPwd) return alert("Mật khẩu mới phải khác mật khẩu cũ");
@@ -62,6 +97,15 @@ const CustomerProfile = () => {
     setChangePwdMode(false);
   };
 
+  if (!customer) return <div className="customer-profile">Đang tải dữ liệu...</div>;
+  
+  const handleLogout = () => {
+    localStorage.removeItem("customer");
+    navigate("/"); // hoặc navigate về trang chủ
+    window.location.reload(); // đảm bảo các component cập nhật
+  };
+  
+  
   return (
     <div className="customer-profile">
       <aside className="sidebar">
@@ -69,16 +113,35 @@ const CustomerProfile = () => {
           onClick={() => { setSelectedTab("profile"); navigate("/CustomerProfile"); }}>
           <FaUser /> Thông tin tài khoản <FaChevronRight />
         </div>
-        <div className={`sidebar-item ${selectedTab === "addresses" ? "active" : ""}`} 
-          onClick={() => { setSelectedTab("addresses"); }}>
+        <div
+          className={`sidebar-item ${selectedTab === "addresses" ? "active" : ""}`}
+          onClick={() => {
+            setSelectedTab("addresses");
+            navigate("/address-management");
+          }}
+        >
           <FaMapMarkerAlt /> Quản Lý Địa Chỉ <FaChevronRight />
         </div>
+
         <div className={`sidebar-item ${selectedTab === "orders" ? "active" : ""}`} 
           onClick={() => { setSelectedTab("orders"); navigate("/order-management"); }}>
           <FaShoppingBag /> Quản Lý Đơn Hàng <FaChevronRight />
         </div>
-        <div className="sidebar-item"><FaRegStar /> Đánh giá và phản hồi <FaChevronRight /></div>
-        <div className="sidebar-item logout"><FaSignOutAlt /> Đăng xuất <FaChevronRight /></div>
+        <div
+          className={`sidebar-item ${selectedTab === "feedback" ? "active" : ""}`}
+          onClick={() => {
+            setSelectedTab("feedback");
+            navigate("/review-feedback");
+          }}
+        >
+          <FaRegStar /> Đánh giá và phản hồi <FaChevronRight />
+        </div>
+
+        <div className="sidebar-item logout" onClick={handleLogout}>
+          <FaSignOutAlt /> Đăng xuất <FaChevronRight />
+        </div>
+
+
       </aside>
 
       <main className="profile-content">
@@ -87,12 +150,19 @@ const CustomerProfile = () => {
             <h2>Thông tin tài khoản</h2>
             <div className="profile-card">
               <div className="avatar-section">
-                <img
-                  src={avatarFile ? URL.createObjectURL(avatarFile) : customer.avatar}
-                  alt="Avatar"
-                  className="avatar"
-                />
-                <p className="username">@{customer.username}</p>
+              <img
+                src={
+                  avatarFile
+                    ? URL.createObjectURL(avatarFile)
+                    : customer.avatar?.startsWith("/uploads/avatars/")
+                      ? `${API_URL}${customer.avatar}`
+                      : "/assets/images/default-avatar.png"
+                }
+                alt="Avatar"
+                className="avatar"
+              />
+
+                <p className="username">@{customer.customerCode}</p>
 
                 {editMode && (
                   <input
@@ -125,11 +195,19 @@ const CustomerProfile = () => {
                   {editMode ? (
                     <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
                   ) : (
-                    <strong>{customer.phone}</strong>
+                    <strong>{customer.phoneNumber}</strong>
+                  )}
+                </div>
+                <div className="info-row">
+                  <span>Ngày sinh:</span>
+                  {editMode ? (
+                    <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
+                  ) : (
+                    <strong>{birthDate ? new Date(birthDate).toLocaleDateString("vi-VN") : "Chưa cập nhật"}</strong>
                   )}
                 </div>
                 <div className="info-row"><span>Trạng thái:</span> <strong>{customer.status}</strong></div>
-                <div className="info-row"><span>Ngày tạo tài khoản:</span> <strong>{customer.createdAt}</strong></div>
+                <div className="info-row"><span>Ngày tạo tài khoản:</span> <strong>{new Date(customer.createdAt).toLocaleDateString("vi-VN")}</strong></div>
 
                 {editMode ? (
                   <button className="save-btn" onClick={handleSave}>Lưu</button>
@@ -162,9 +240,10 @@ const CustomerProfile = () => {
             </div>
           </>
         )}
-
-        {selectedTab === "orders" && <OrderManagement />}
         {selectedTab === "addresses" && <AddressManagement />}
+        {selectedTab === "orders" && <OrderManagement />}
+        {selectedTab === "feedback" && <ReviewFeedback />}
+
       </main>
     </div>
   );
