@@ -2,14 +2,21 @@
     position: relative;
     width: 100%;
     max-width: 1600px;
+<<<<<<< HEAD
     overflow: hidden;
     margin: 0 auto;
+=======
+    margin: 0 auto;
+    overflow: hidden;
+>>>>>>> 3d35f218dd54eaedf564243e1dc866218b9ba7eb
 }
 
 .featured-banner-image {
     width: 100%;
     height: auto;
     display: block;
+    max-width: 1600px;
+    margin: 0 auto;
     border-radius: 10px;
 }
 
@@ -19,6 +26,8 @@
     left: 5%;
     color: white;
     text-align: left;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
 .featured-banner-content h2 {
