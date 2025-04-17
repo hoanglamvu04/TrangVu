@@ -1,4 +1,3 @@
-// src/hooks/useProducts.js
 import { useEffect, useState } from "react";
 import axios from "axios";
 

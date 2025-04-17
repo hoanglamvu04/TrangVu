@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/QuickViewModal.css";
+import { useCart } from "../contexts/CartContext";
 
 const ProductQuickViewModal = ({ product, onClose, actionType = "buy" }) => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
+
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -14,7 +17,9 @@ const ProductQuickViewModal = ({ product, onClose, actionType = "buy" }) => {
       const defaultColor = product.colors?.[0]?.code || "";
       setSelectedColor(defaultColor);
       setSelectedSize(product.sizes?.[0] || "");
-      setSelectedImage(product.imagesByColor?.[defaultColor] || product.image || "");
+      const defaultImg =
+        product.colorImages?.[defaultColor] || product.image || "/assets/default.jpg";
+      setSelectedImage(defaultImg);
     }
   }, [product]);
 
@@ -30,7 +35,19 @@ const ProductQuickViewModal = ({ product, onClose, actionType = "buy" }) => {
         state: { product, selectedColor, selectedSize, quantity },
       });
     } else {
-      alert(`Đã thêm vào giỏ:\n- ${product.name}\n- Màu: ${selectedColor}\n- Size: ${selectedSize}\n- SL: ${quantity}`);
+      addToCart({
+        productCode: product.code,
+        name: product.name,
+        selectedColor,
+        selectedSize,
+        quantity,
+        price: product.finalPrice || product.price,
+        image: product.colorImages?.[selectedColor] || product.image || "/assets/default.jpg"
+      });
+      
+      alert(
+        `Đã thêm vào giỏ:\n- ${product.name}\n- Màu: ${getSelectedColorName()}\n- Size: ${selectedSize}\n- SL: ${quantity}`
+      );
       onClose();
     }
   };
@@ -51,7 +68,11 @@ const ProductQuickViewModal = ({ product, onClose, actionType = "buy" }) => {
         {/* Cột ảnh */}
         <div className="modal-left">
           <div className="main-image-wrapper">
-            <img src={selectedImage} alt={product.name} className="modal-image" />
+            <img
+              src={selectedImage}
+              alt={product.name}
+              className="modal-image"
+            />
           </div>
         </div>
 
@@ -60,42 +81,49 @@ const ProductQuickViewModal = ({ product, onClose, actionType = "buy" }) => {
           <h2 className="modal-title">{product.name}</h2>
 
           {/* Màu sắc */}
-        <div className="modal-section">
-          <label>Màu sắc: <strong>{getSelectedColorName()}</strong></label>
-          <div className="color-options">
-            {product.colors?.map((color, idx) => {
-              const isWhite =
-                color.code.toLowerCase() === "#ffffff" ||
-                color.code.toLowerCase() === "white";
-              return (
-                <div key={idx} className="color-wrapper">
-                  <span
-                    className={`color-dot ${isWhite ? "white" : ""} ${
-                      selectedColor === color.code ? "active" : ""
-                    }`}
-                    style={{ backgroundColor: color.code }}
-                    onClick={() => {
-                      setSelectedColor(color.code);
-                      setSelectedImage(product.colorImages?.[color.code] || product.image);
-                    }}
-                  ></span>
-                </div>
-              );
-            })}
+          <div className="modal-section">
+            <label>
+              Màu sắc: <strong>{getSelectedColorName()}</strong>
+            </label>
+            <div className="color-options">
+              {product.colors?.map((color, idx) => {
+                const isWhite =
+                  color.code.toLowerCase() === "#ffffff" ||
+                  color.code.toLowerCase() === "white";
+                return (
+                  <div key={idx} className="color-wrapper">
+                    <span
+                      className={`color-dot ${isWhite ? "white" : ""} ${
+                        selectedColor === color.code ? "active" : ""
+                      }`}
+                      style={{ backgroundColor: color.code }}
+                      onClick={() => {
+                        setSelectedColor(color.code);
+                        setSelectedImage(
+                          product.colorImages?.[color.code] ||
+                          product.image ||
+                          "/assets/default.jpg"
+                        );
+                      }}
+                    ></span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-
 
           {/* Size */}
           <div className="modal-section">
             <label>Kích cỡ:</label>
             <div className="size-options">
-              {product.sizes.map((size) => {
+              {product.sizes?.map((size) => {
                 const isOutOfStock = product.sizeStock?.[size] === 0;
                 return (
                   <span
                     key={size}
-                    className={`size-box ${selectedSize === size ? "active" : ""} ${isOutOfStock ? "disabled" : ""}`}
+                    className={`size-box ${
+                      selectedSize === size ? "active" : ""
+                    } ${isOutOfStock ? "disabled" : ""}`}
                     onClick={() => !isOutOfStock && setSelectedSize(size)}
                   >
                     {size}

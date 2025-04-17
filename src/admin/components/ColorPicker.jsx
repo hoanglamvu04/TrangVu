@@ -49,15 +49,15 @@ const colorGroups = {
     { code: "#000000", name: "Đen" },
     { code: "#1c1c1c", name: "Đen khói" },
     { code: "#2f4f4f", name: "Xám đậm" },
-    { code: "#4b4b4b", name: "Xám tiêu" },         // ✅ thêm "xám tiêu"
-    { code: "#C1C2C2", name: "Xám nhạt" }          // ✅ thêm màu xám phổ thông
+    { code: "#4b4b4b", name: "Xám tiêu" },        
+    { code: "#C1C2C2", name: "Xám nhạt" }         
   ],
   "Trắng / Sữa": [
     { code: "#ffffff", name: "Trắng" },
     { code: "#f0f0f0", name: "Trắng ngà" },
     { code: "#fafafa", name: "Trắng sữa" },
     { code: "#f5f5f5", name: "Trắng khói" },
-    { code: "#fefee2", name: "Màu sữa" }           // ✅ thêm "màu sữa"
+    { code: "#fefee2", name: "Màu sữa" }          
   ]
 };
 
