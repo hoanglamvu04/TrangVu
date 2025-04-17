@@ -10,7 +10,7 @@ const Menu = () => {
           <a href="/category/ao-thun-nam" className="menu-item">Áo Thun Nam</a>
           <a href="/category/ao-thun-nu" className="menu-item">Áo Thun Nữ</a>
           <a href="/category/vay-nu" className="menu-item">Váy</a>
-          <a href="/category/giay-dep" className="menu-item">Giày Dép</a>
+          <a href="/category/quan-nam" className="menu-item">Quần Nam</a>
           <a href="/category/tui-xach" className="menu-item">Túi Xách</a>
           <a href="/category/mu-non" className="menu-item">Mũ & Nón</a>
           <a href="/category/phu-kien" className="menu-item">Phụ Kiện</a>
