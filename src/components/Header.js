@@ -3,20 +3,21 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 import AuthModal from "../components/AuthModal/AuthModal";
 import CartModal from "./CartModal";
+import NotificationModal from "./NotificationModal"; // ✅ modal thông báo
 
 const Header = () => {
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [customer, setCustomer] = useState(null);
-  const [showCart, setShowCart] = useState(false); // ✅ modal giỏ hàng
+  const [showCart, setShowCart] = useState(false); 
+  const [showNotifications, setShowNotifications] = useState(false); // ✅ modal thông báo
 
-  // Kiểm tra đăng nhập khi vào trang
+  // Lấy thông tin đăng nhập
   useEffect(() => {
     const stored = localStorage.getItem("customer");
     if (stored) setCustomer(JSON.parse(stored));
   }, []);
 
-  // Theo dõi sự thay đổi localStorage
   useEffect(() => {
     const handleStorageChange = () => {
       const stored = localStorage.getItem("customer");
@@ -27,7 +28,6 @@ const Header = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // Xử lý icon người dùng
   const handleUserIconClick = () => {
     const stored = localStorage.getItem("customer");
     if (stored) {
@@ -65,7 +65,6 @@ const Header = () => {
           </div>
 
           <div className="user-actions">
-            {/* 👤 Người dùng */}
             <span
               className="icon"
               onClick={handleUserIconClick}
@@ -74,14 +73,12 @@ const Header = () => {
               👤
             </span>
 
-            {/* 🛒 Giỏ hàng */}
             <span className="icon cart-icon" onClick={() => setShowCart(true)}>
               🛒
             </span>
 
-            {/* ❤️ Yêu thích */}
-            <span className="icon" onClick={() => navigate("/wishlist")}>
-              ❤️
+            <span className="icon" onClick={() => setShowNotifications(true)}>
+              🔔
             </span>
 
             <span className="icon">💬</span>
@@ -95,6 +92,11 @@ const Header = () => {
 
       {/* Modal giỏ hàng */}
       {showCart && <CartModal onClose={() => setShowCart(false)} />}
+
+      {/* Modal thông báo */}
+      {showNotifications && (
+        <NotificationModal onClose={() => setShowNotifications(false)} />
+      )}
     </header>
   );
 };

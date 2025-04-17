@@ -27,7 +27,7 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  object-fit: cover;  /* ✅ Cắt ảnh cho vừa khung nhưng vẫn đủ */
+  object-fit: cover;  
   object-position: center;
   transition: transform 0.3s ease;
 }

@@ -6,7 +6,6 @@ import Banner from "./components/Banner";
 import ProductCategories from "./components/ProductCategories";
 import FeaturedBanner from "./components/FeaturedBanner";
 import Footer from "./components/Footer";
-import Wishlist from "./pages/Wishlist";
 import Category from "./pages/Category";
 import CustomerProfile from "./pages/CustomerProfile";
 import ProductDetail from "./pages/ProductDetail";
@@ -40,7 +39,6 @@ function App() {
                       </>
                     }
                   />
-                  <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/category/:categoryCode" element={<Category />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/CustomerProfile" element={<CustomerProfile />} />

@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/admin.css";
 import DescriptionModal from "../components/DescriptionModal";
-import ProductDetailModal from "../components/ProductDetailModal";
-import ProductFormModal from "../components/ProductFormModal";
-import "../styles/ProductFormModal.css"
+import ProductDetailModal from "../components/ProductDetailModal"; 
 
 const API_URL = "http://localhost:5000";
 
@@ -15,16 +13,18 @@ const ProductManager = () => {
     code: "", name: "", originalPrice: "", discount: 0, finalPrice: "",
     category: "", status: "Active", image: null, imagePath: "",
   });
+
   const [editingId, setEditingId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showProductForm, setShowProductForm] = useState(false);
 
+  // Mô tả
   const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const [productDescriptions, setProductDescriptions] = useState([]);
   const [showDescForm, setShowDescForm] = useState(false);
   const [editingDescId, setEditingDescId] = useState(null);
   const [newDesc, setNewDesc] = useState({ type: "form", title: "", content: "", image: null });
 
+  // Chi tiết
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [productDetails, setProductDetails] = useState([]);
   const [showDetailForm, setShowDetailForm] = useState(false);
@@ -48,11 +48,57 @@ const ProductManager = () => {
     setCategories(res.data);
   };
 
+  // --- MÔ TẢ ---
   const fetchDescriptions = async (productCode) => {
     const res = await axios.get(`${API_URL}/api/product-descriptions/${productCode}`);
     setProductDescriptions(res.data);
   };
 
+  const handleNewDescChange = (e) => {
+    const { name, value, files } = e.target;
+    setNewDesc({ ...newDesc, [name]: name === "image" ? files[0] : value });
+  };
+
+  const handleAddOrUpdateDescription = async () => {
+    const formData = new FormData();
+    formData.append("productCode", selectedProduct.code);
+    formData.append("type", newDesc.type);
+    formData.append("title", newDesc.title);
+    formData.append("content", newDesc.content);
+    if (newDesc.image) formData.append("image", newDesc.image);
+
+    if (editingDescId) {
+      await axios.put(`${API_URL}/api/product-descriptions/${editingDescId}`, formData);
+    } else {
+      await axios.post(`${API_URL}/api/product-descriptions`, formData);
+    }
+    await fetchDescriptions(selectedProduct.code);
+    setShowDescForm(false);
+    setEditingDescId(null);
+    setNewDesc({ type: "form", title: "", content: "", image: null });
+  };
+
+  const handleEditDescription = (desc) => {
+    setNewDesc({ type: desc.type, title: desc.title, content: desc.content, image: null });
+    setEditingDescId(desc._id);
+    setShowDescForm(true);
+  };
+
+  const handleDeleteDescription = async (id) => {
+    await axios.delete(`${API_URL}/api/product-descriptions/${id}`);
+    await fetchDescriptions(selectedProduct.code);
+  };
+
+  const openDescriptionModal = async (product) => {
+    await fetchDescriptions(product.code);
+    setSelectedProduct(product);
+    setShowDescriptionModal(true);
+    setShowDescForm(false);
+    setEditingDescId(null);
+    setNewDesc({ type: "form", title: "", content: "", image: null });
+  };
+
+  // --- CHI TIẾT ---
   const fetchDetails = async (productCode) => {
     const res = await axios.get(`${API_URL}/api/product-details/${productCode}`);
     setProductDetails(res.data);
@@ -62,12 +108,72 @@ const ProductManager = () => {
     const grouped = {};
     details.forEach((d) => {
       const key = d.colorCode || "unknown";
-      if (!grouped[key]) grouped[key] = [];
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
       grouped[key].push(d);
     });
     return grouped;
   };
+  
+  const openDetailModal = async (product) => {
+    await fetchDetails(product.code);
+    setSelectedProduct(product);
+    setShowDetailModal(true);
+    setShowDetailForm(false);
+    setEditingDetailId(null);
+    setNewDetail({ detailCode: "", colorCode: "", colorName: "", size: "", quantity: "", image: null });
+  };
 
+  const handleNewDetailChange = (e) => {
+    const { name, value, files } = e.target;
+    setNewDetail({ ...newDetail, [name]: name === "image" ? files[0] : value });
+  };
+
+  const handleAddOrUpdateDetail = async () => {
+    const formData = new FormData();
+    formData.append("productCode", selectedProduct.code);
+    formData.append("color", newDetail.colorCode);
+    formData.append("colorName", newDetail.colorName);
+    formData.append("size", newDetail.size);
+    formData.append("quantity", newDetail.quantity);
+    if (newDetail.image) formData.append("image", newDetail.image);
+
+    if (editingDetailId) {
+      await axios.put(`${API_URL}/api/product-details/${editingDetailId}`, formData);
+    } else {
+      await axios.post(`${API_URL}/api/product-details`, formData);
+    }
+    await fetchDetails(selectedProduct.code);
+    setShowDetailForm(false);
+    setEditingDetailId(null);
+    setNewDetail({ detailCode: "", colorCode: "", colorName: "", size: "", quantity: "", image: null });
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const [editingDetail, setEditingDetail] = useState(null);
+
+
+  const handleEditDetail = (detail) => {
+    setShowDetailForm(true); // mở form
+    setEditingDetailId(detail._id); // gán ID để update
+    setNewDetail({
+      colorCode: detail.colorCode,
+      colorName: detail.colorName,
+      size: detail.size,
+      quantity: detail.quantity,
+      image: null, // không truyền ảnh cũ
+    });
+  };
+  
+  
+
+  const handleDeleteDetail = async (id) => {
+    await axios.delete(`${API_URL}/api/product-details/${id}`);
+    await fetchDetails(selectedProduct.code);
+  };
+
+  // --- SẢN PHẨM ---
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     const updatedForm = {
@@ -99,7 +205,6 @@ const ProductManager = () => {
 
     setForm({ code: "", name: "", originalPrice: "", discount: 0, finalPrice: "", category: "", status: "Active", image: null, imagePath: "" });
     setEditingId(null);
-    setShowProductForm(false);
     fetchProducts();
   };
 
@@ -111,7 +216,6 @@ const ProductManager = () => {
       status: product.status, image: null, imagePath: product.image || "",
     });
     setEditingId(product._id);
-    setShowProductForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -120,24 +224,7 @@ const ProductManager = () => {
     fetchProducts();
   };
 
-  const openDescriptionModal = async (product) => {
-    await fetchDescriptions(product.code);
-    setSelectedProduct(product);
-    setShowDescriptionModal(true);
-    setShowDescForm(false);
-    setEditingDescId(null);
-    setNewDesc({ type: "form", title: "", content: "", image: null });
-  };
-
-  const openDetailModal = async (product) => {
-    await fetchDetails(product.code);
-    setSelectedProduct(product);
-    setShowDetailModal(true);
-    setShowDetailForm(false);
-    setEditingDetailId(null);
-    setNewDetail({ detailCode: "", colorCode: "", colorName: "", size: "", quantity: "", image: null });
-  };
-
+  // --- GOM NHÓM MÔ TẢ ---
   const groupedDescriptions = { form: [], material: [], design: [] };
   productDescriptions.forEach((desc) => {
     if (groupedDescriptions[desc.type]) {
@@ -149,12 +236,30 @@ const ProductManager = () => {
     <div className="admin-page">
       <h2 className="admin-title">Quản lý sản phẩm</h2>
 
-      <button className="btn-submit" onClick={() => {
-        setEditingId(null);
-        setForm({ code: "", name: "", originalPrice: "", discount: 0, finalPrice: "", category: "", status: "Active", image: null, imagePath: "" });
-        setShowProductForm(true);
-      }}>+ Thêm sản phẩm</button>
+      {/* FORM */}
+      <div className="admin-form">
+        <input name="code" placeholder="Mã sản phẩm" value={form.code} onChange={handleChange} />
+        <input name="name" placeholder="Tên sản phẩm" value={form.name} onChange={handleChange} />
+        <input name="originalPrice" type="number" placeholder="Giá gốc" value={form.originalPrice} onChange={handleChange} />
+        <input name="discount" type="number" placeholder="Giảm giá (%)" value={form.discount} onChange={handleChange} />
+        <input name="finalPrice" type="number" disabled value={form.finalPrice} />
+        <select name="category" value={form.category} onChange={handleChange}>
+          <option value="">-- Chọn danh mục --</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>{cat.name}</option>
+          ))}
+        </select>
+        <select name="status" value={form.status} onChange={handleChange}>
+          <option value="Active">Đang bán</option>
+          <option value="Inactive">Ngưng bán</option>
+        </select>
+        <input name="image" type="file" accept="image/*" onChange={handleChange} />
+        <button className="btn-submit" onClick={handleSubmit}>
+          {editingId ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+        </button>
+      </div>
 
+      {/* DANH SÁCH */}
       <table className="admin-table">
         <thead>
           <tr>
@@ -191,17 +296,7 @@ const ProductManager = () => {
         </tbody>
       </table>
 
-      {showProductForm && (
-        <ProductFormModal
-          form={form}
-          categories={categories}
-          editingId={editingId}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-          onClose={() => setShowProductForm(false)}
-        />
-      )}
-
+      {/* MODALS */}
       {showDescriptionModal && selectedProduct && (
         <DescriptionModal
           product={selectedProduct}
@@ -212,67 +307,30 @@ const ProductManager = () => {
           setShowForm={setShowDescForm}
           newDesc={newDesc}
           setNewDesc={setNewDesc}
-          onChange={(e) => setNewDesc({ ...newDesc, [e.target.name]: e.target.name === "image" ? e.target.files[0] : e.target.value })}
-          onSubmit={async () => {
-            const formData = new FormData();
-            formData.append("productCode", selectedProduct.code);
-            formData.append("type", newDesc.type);
-            formData.append("title", newDesc.title);
-            formData.append("content", newDesc.content);
-            if (newDesc.image) formData.append("image", newDesc.image);
-
-            if (editingDescId) {
-              await axios.put(`${API_URL}/api/product-descriptions/${editingDescId}`, formData);
-            } else {
-              await axios.post(`${API_URL}/api/product-descriptions`, formData);
-            }
-            await fetchDescriptions(selectedProduct.code);
-            setShowDescForm(false);
-            setEditingDescId(null);
-            setNewDesc({ type: "form", title: "", content: "", image: null });
-          }}
+          onChange={handleNewDescChange}
+          onSubmit={handleAddOrUpdateDescription}
           editingId={editingDescId}
-          onEdit={(desc) => {
-            setNewDesc({ type: desc.type, title: desc.title, content: desc.content, image: null });
-            setEditingDescId(desc._id);
-            setShowDescForm(true);
-          }}
-          onDelete={async (id) => {
-            await axios.delete(`${API_URL}/api/product-descriptions/${id}`);
-            await fetchDescriptions(selectedProduct.code);
-          }}
+          onEdit={handleEditDescription}
+          onDelete={handleDeleteDescription}
         />
       )}
 
-      {showDetailModal && selectedProduct && (
-        <ProductDetailModal
-          product={selectedProduct}
-          groupedDetails={groupDetailsByColor(productDetails)}
-          onClose={() => setShowDetailModal(false)}
-          showForm={showDetailForm}
-          setShowForm={setShowDetailForm}
-          newDetail={newDetail}
-          setNewDetail={setNewDetail}
-          editingId={editingDetailId}
-          setEditingId={setEditingDetailId}
-          onEdit={(detail) => {
-            setShowDetailForm(true);
-            setEditingDetailId(detail._id);
-            setNewDetail({
-              colorCode: detail.colorCode,
-              colorName: detail.colorName,
-              size: detail.size,
-              quantity: detail.quantity,
-              image: null,
-            });
-          }}
-          onDelete={async (id) => {
-            await axios.delete(`${API_URL}/api/product-details/${id}`);
-            await fetchDetails(selectedProduct.code);
-          }}
-          fetchDetails={fetchDetails}
-        />
-      )}
+{showDetailModal && selectedProduct && (
+  <ProductDetailModal
+  product={selectedProduct}
+  groupedDetails={groupDetailsByColor(productDetails)} // phải có groupedDetails!
+  onClose={() => setShowDetailModal(false)}
+  showForm={showDetailForm}
+  setShowForm={setShowDetailForm}
+  newDetail={newDetail}
+  setNewDetail={setNewDetail}
+  editingId={editingDetailId}
+  setEditingId={setEditingDetailId}
+  onEdit={handleEditDetail}
+  onDelete={handleDeleteDetail}
+  fetchDetails={fetchDetails}
+/>
+)}
     </div>
   );
 };
