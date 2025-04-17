@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import AddressPicker from "../components/AddressPicker";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import axios from "axios";
+
 const API_URL = "http://localhost:5000/api/addresses";
 
 const AddressManagement = () => {
   const [addresses, setAddresses] = useState([]);
   const [newLabel, setNewLabel] = useState("");
   const [newDetail, setNewDetail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
@@ -30,12 +33,17 @@ const AddressManagement = () => {
     }
   };
 
+  const isPhoneValid = (phone) => /^0\d{9}$/.test(phone);
+
   const handleAddAddress = async () => {
-    if (!province || !district || !ward || !newDetail || !customerId) return;
+    if (!province || !district || !ward || !newDetail || !phoneNumber || !customerId || !isPhoneValid(phoneNumber)) {
+      return;
+    }
     try {
       await axios.post(API_URL, {
         customerId,
         label: newLabel,
+        phoneNumber,
         province,
         district,
         ward,
@@ -52,16 +60,20 @@ const AddressManagement = () => {
     setEditId(addr._id);
     setNewLabel(addr.label || "");
     setNewDetail(addr.detail || "");
+    setPhoneNumber(addr.phoneNumber || "");
     setProvince(addr.province || "");
     setDistrict(addr.district || "");
     setWard(addr.ward || "");
   };
 
   const handleSaveEdit = async () => {
-    if (!province || !district || !ward || !newDetail) return;
+    if (!province || !district || !ward || !newDetail || !phoneNumber || !isPhoneValid(phoneNumber)) {
+      return;
+    }
     try {
       await axios.put(`${API_URL}/${editId}`, {
         label: newLabel,
+        phoneNumber,
         province,
         district,
         ward,
@@ -89,11 +101,23 @@ const AddressManagement = () => {
     setEditId(null);
     setNewLabel("");
     setNewDetail("");
+    setPhoneNumber("");
     setProvince("");
     setDistrict("");
     setWard("");
+    setPhoneError("");
     setResetTrigger((prev) => prev + 1);
   };
+
+  useEffect(() => {
+    if (phoneNumber && !isPhoneValid(phoneNumber)) {
+      setPhoneError("Số điện thoại phải bắt đầu bằng số 0 và đủ 10 chữ số.");
+    } else {
+      setPhoneError("");
+    }
+  }, [phoneNumber]);
+
+  const isFormValid = province && district && ward && newDetail && isPhoneValid(phoneNumber);
 
   return (
     <div className="address-management">
@@ -104,6 +128,7 @@ const AddressManagement = () => {
             <div className="address-info">
               <strong>{addr.label || "(Không có ghi chú)"}</strong>
               <p>{addr.fullAddress}</p>
+              <p>SĐT: {addr.phoneNumber || "Không có"}</p>
             </div>
             <div className="anddress-actios">
               <FaEdit
@@ -117,7 +142,6 @@ const AddressManagement = () => {
                 onClick={() => handleDeleteAddress(addr._id)}
               />
             </div>
-
           </div>
         ))}
       </div>
@@ -149,12 +173,30 @@ const AddressManagement = () => {
           onChange={(e) => setNewDetail(e.target.value)}
         />
 
+        <input
+          type="text"
+          placeholder="Số điện thoại liên hệ"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+        {phoneError && <p style={{ color: "red", fontSize: "14px" }}>{phoneError}</p>}
+
         {editId ? (
-          <button className="save-btn" onClick={handleSaveEdit}>
+          <button
+            className="save-btn"
+            onClick={handleSaveEdit}
+            disabled={!isFormValid}
+            style={{ opacity: !isFormValid ? 0.5 : 1, cursor: !isFormValid ? "not-allowed" : "pointer" }}
+          >
             Lưu thay đổi
           </button>
         ) : (
-          <button className="add-btn" onClick={handleAddAddress}>
+          <button
+            className="add-btn"
+            onClick={handleAddAddress}
+            disabled={!isFormValid}
+            style={{ opacity: !isFormValid ? 0.5 : 1, cursor: !isFormValid ? "not-allowed" : "pointer" }}
+          >
             <FaPlus /> Thêm Địa Chỉ
           </button>
         )}

@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./styles/App.css";
 import Header from "./components/Header";
-import MainNavigation from "./components/MainNavigation";
 import Banner from "./components/Banner";
 import ProductCategories from "./components/ProductCategories";
 import FeaturedBanner from "./components/FeaturedBanner";
@@ -12,11 +12,12 @@ import ProductDetail from "./pages/ProductDetail";
 import AdminRoutes from "./admin";
 import { CartProvider } from "../src/contexts/CartContext";
 import Checkout from "./pages/Checkout";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
   return (
     <Router>
-      <CartProvider> {/* ✅ Bọc toàn bộ app với context giỏ hàng */}
+      <CartProvider>
         <Routes>
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminRoutes />} />
@@ -27,27 +28,29 @@ function App() {
             element={
               <>
                 <Header />
-                <MainNavigation />
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      <>
-                        <Banner />
-                        <ProductCategories />
-                        <FeaturedBanner />
-                      </>
-                    }
-                  />
-                  <Route path="/category/:categoryCode" element={<Category />} />
-                  <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/CustomerProfile" element={<CustomerProfile />} />
-                  <Route path="/order-management" element={<CustomerProfile />} />
-                  <Route path="/address-management" element={<CustomerProfile />} />
-                  <Route path="/review-feedback" element={<CustomerProfile />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                </Routes>
-                <Footer />
+                <div className="main-wrapper"> {/* 👈 Thay vì page-content */}
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={
+                        <>
+                          <Banner />
+                          <ProductCategories />
+                          <FeaturedBanner />
+                        </>
+                      }
+                    />
+                    <Route path="/category/:categoryCode" element={<Category />} />
+                    <Route path="/product/:id" element={<ProductDetail />} />
+                    <Route path="/CustomerProfile" element={<CustomerProfile />} />
+                    <Route path="/order-management" element={<CustomerProfile />} />
+                    <Route path="/address-management" element={<CustomerProfile />} />
+                    <Route path="/review-feedback" element={<CustomerProfile />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/search" element={<SearchResults />} />
+                  </Routes>
+                  <Footer />
+                </div>
               </>
             }
           />

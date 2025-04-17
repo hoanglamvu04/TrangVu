@@ -1,96 +1,124 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/Checkout.css";
+import { useNavigate } from "react-router-dom";
 import getColorNameFromCode from "../utils/getColorNameFromCode";
+import "../styles/Checkout.css";
 
 const API_ADDRESS = "http://localhost:5000/api/addresses";
 const API_ORDER = "http://localhost:5000/api/orders";
+const API_CART = "http://localhost:5000/api/cart";
+const API_NOTIFICATION = "http://localhost:5000/api/notifications";
 
 const Checkout = () => {
+  const navigate = useNavigate(); // dùng rồi nhưng không cần navigate nữa nếu reload thật
   const customer = JSON.parse(localStorage.getItem("customer"));
   const customerId = customer?._id;
 
   const [cartItems, setCartItems] = useState([]);
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState("");
+  const [selectedAddressId, setSelectedAddressId] = useState("");
 
   useEffect(() => {
-    if (customerId) {
-      fetchAddresses();
-      fetchCartItems();
-    }
+    if (!customerId) return;
+    fetchAddresses();
+    fetchCartItems();
   }, [customerId]);
 
   const fetchAddresses = async () => {
     try {
       const res = await axios.get(`${API_ADDRESS}/${customerId}`);
       setAddresses(res.data);
-      if (res.data.length > 0) {
-        setSelectedAddress(res.data[0].fullAddress);
-      }
+      if (res.data.length) setSelectedAddressId(res.data[0]._id);
     } catch (err) {
-      console.error("Lỗi khi lấy địa chỉ:", err);
+      console.error("❌ Lỗi khi lấy địa chỉ:", err);
     }
   };
 
   const fetchCartItems = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/cart/${customerId}`);
-      setCartItems(res.data);
+      const res = await axios.get(`${API_CART}/${customerId}`);
+      const items =
+        Array.isArray(res.data) && res.data[0]?.items
+          ? res.data[0].items
+          : res.data;
+      setCartItems(items);
     } catch (err) {
-      console.error("Lỗi khi lấy giỏ hàng:", err);
+      console.error("❌ Lỗi khi lấy giỏ hàng:", err);
     }
   };
 
   const handlePlaceOrder = async () => {
-    try {
-      const orderItems = cartItems.map((item) => ({
-        productName: item.name, // đảm bảo tên truyền đúng
-        quantity: item.quantity,
-        price: item.price,
-        color: item.selectedColor,
-        size: item.selectedSize,
-      }));
-      const totalAmount = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+    const addressObj = addresses.find((a) => a._id === selectedAddressId);
+    if (!addressObj) return alert("Vui lòng chọn địa chỉ.");
 
-      await axios.post(API_ORDER, {
+    try {
+      const orderItems = cartItems.map((i) => ({
+        productName: i.name,
+        quantity: i.quantity,
+        price: i.price,
+        color: i.selectedColor,
+        size: i.selectedSize,
+      }));
+
+      const totalAmount = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
+
+      const orderRes = await axios.post(API_ORDER, {
         customer: customerId,
         items: orderItems,
         totalAmount,
+        address: {
+          fullAddress: addressObj.fullAddress,
+          phoneNumber: addressObj.phoneNumber,
+        },
       });
 
+      // await axios.post(API_NOTIFICATION, {
+      //   customerId,
+      //   orderCode: orderRes.data.orderCode,
+      //   type: "placed",
+      //   message: `Bạn đã đặt đơn hàng ${orderRes.data.orderCode} thành công với tổng tiền ${totalAmount.toLocaleString("vi-VN")} ₫.`,
+      // });      
+
+      await axios.delete(`${API_CART}/clear/${customerId}`);
+      await fetchCartItems();
+
       alert("Đặt hàng thành công!");
+      window.location.href = "/order-management"; // ✅ chuyển trang bằng reload
     } catch (err) {
-      console.error("Lỗi khi đặt hàng:", err);
-      alert("Đặt hàng thất bại.");
+      console.error("❌ Lỗi khi đặt hàng:", err);
+      alert("Đặt hàng thất bại. Vui lòng thử lại.");
     }
   };
 
-  const formatCurrency = (amount) =>
-    amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+  const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
+  const formatCurrency = (n) =>
+    n.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
   return (
     <div className="checkout-container">
-      <h2>Thanh Toán</h2>
+      <h2>Thanh toán</h2>
 
       <div className="checkout-section">
         <h3>1. Địa chỉ giao hàng</h3>
         {addresses.length === 0 ? (
-          <p>Chưa có địa chỉ. Vui lòng thêm địa chỉ trong Hồ sơ.</p>
+          <p>Chưa có địa chỉ.</p>
         ) : (
           <>
             <select
-              value={selectedAddress}
-              onChange={(e) => setSelectedAddress(e.target.value)}
+              value={selectedAddressId}
+              onChange={(e) => setSelectedAddressId(e.target.value)}
               className="address-select"
             >
-              {addresses.map((addr) => (
-                <option key={addr._id} value={addr.fullAddress}>
-                  {addr.fullAddress}
+              {addresses.map((a) => (
+                <option key={a._id} value={a._id}>
+                  {a.fullAddress} - {a.phoneNumber}
                 </option>
               ))}
             </select>
-            <div className="selected-address">{selectedAddress}</div>
+            <div className="selected-address">
+              <p><strong>Địa chỉ:</strong> {selectedAddress?.fullAddress}</p>
+              <p><strong>SĐT:</strong> {selectedAddress?.phoneNumber}</p>
+            </div>
           </>
         )}
       </div>
@@ -118,16 +146,11 @@ const Checkout = () => {
           </tbody>
         </table>
         <div className="checkout-total">
-          Tổng cộng:{" "}
-          <strong>
-            {formatCurrency(
-              cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-            )}
-          </strong>
+          Tổng cộng: <strong>{formatCurrency(cartItems.reduce((s, i) => s + i.price * i.quantity, 0))}</strong>
         </div>
       </div>
 
-      <button className="checkout-button" onClick={handlePlaceOrder}>
+      <button className="checkout-button" onClick={handlePlaceOrder} disabled={!cartItems.length}>
         Xác nhận đặt hàng
       </button>
     </div>

@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema({
   customer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",
-    required: true
+    required: true,
   },
   items: [
     {
@@ -18,23 +18,28 @@ const orderSchema = new mongoose.Schema({
       price: Number,
       color: String,
       size: String,
-    }
+    },
   ],
   totalAmount: {
     type: Number,
-    required: true
+    required: true,
   },
+  address: {
+    fullAddress: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
+  },  
   status: {
     type: String,
     enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
-    default: "Pending"
+    default: "Pending",
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
+// Tạo mã đơn hàng tự động
 orderSchema.statics.generateOrderCode = async function () {
   const latest = await this.findOne().sort({ createdAt: -1 });
   const next = latest ? parseInt(latest.orderCode?.replace("DH", "")) + 1 : 1;

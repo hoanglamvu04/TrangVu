@@ -12,9 +12,26 @@ const UserManager = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editUser, setEditUser] = useState(null);
 
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+
+  // Phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 30;
+
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      setShowHeader(currentScroll < lastScrollTop || currentScroll < 10);
+      setLastScrollTop(currentScroll <= 0 ? 0 : currentScroll);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollTop]);
 
   const fetchUsers = async () => {
     try {
@@ -46,19 +63,32 @@ const UserManager = () => {
       user.email?.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Phân trang
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
+
   return (
     <div className="admin-page">
-      <h2 className="admin-title">Quản lý tài khoản khách hàng</h2>
-
-      <div className="admin-top-bar">
-        <input
-          type="text"
-          placeholder="Tìm kiếm theo tên hoặc email..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="admin-search-box"
-        />
-        <button className="add-btn" onClick={() => setShowAddModal(true)}>+ Thêm người dùng</button>
+      <div className={`section-header ${showHeader ? "visible" : "hidden"}`}>
+        <h2 className="admin-title">Quản lý tài khoản khách hàng</h2>
+        <div className="admin-header-controls">
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo tên hoặc email..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1); // reset trang khi tìm kiếm
+            }}
+            className="admin-search-box"
+          />
+          <button className="add-btn" onClick={() => setShowAddModal(true)}>
+            + Thêm người dùng
+          </button>
+        </div>
       </div>
 
       <table className="admin-table">
@@ -76,7 +106,7 @@ const UserManager = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredUsers.map((user) => (
+          {paginatedUsers.map((user) => (
             <tr key={user._id}>
               <td>{user.customerCode}</td>
               <td>
@@ -103,7 +133,21 @@ const UserManager = () => {
         </tbody>
       </table>
 
-      {/* Modal thêm */}
+      {/* Phân trang */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
+
       {showAddModal && (
         <AddUserModal
           onClose={() => setShowAddModal(false)}
@@ -114,7 +158,6 @@ const UserManager = () => {
         />
       )}
 
-      {/* Modal sửa */}
       {editUser && (
         <EditUserModal
           user={editUser}

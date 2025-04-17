@@ -25,6 +25,10 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: true, 
   },
+  phoneNumber: {
+    type: String,
+    required: true, // Bắt buộc nhập số điện thoại liên hệ
+  },
   fullAddress: {
     type: String,
     required: true, 

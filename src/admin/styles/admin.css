@@ -1,5 +1,7 @@
 .admin-page {
   padding: 20px;
+  margin-top: 110px;
+  transition: margin-top 0.3s ease;
 }
 
 .admin-form {
@@ -262,4 +264,68 @@
 
 .btn-close-modal:hover {
   background: #7e7e7e;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: #fff;
+  position: sticky;
+  top: 56px; /* chiều cao của sidebar */
+  z-index: 999;
+  transition: top 0.3s ease;
+}
+
+.section-header.hidden {
+  top: -100px;
+}
+
+.section-header.visible {
+  top: 56px;
+}
+
+.admin-header-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-filter-dropdown {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+.pagination-btn {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  text-align: center;
+}
+
+.pagination-btn:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.pagination-btn.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  border-color: #007bff;
 }

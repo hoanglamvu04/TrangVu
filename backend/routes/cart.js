@@ -80,13 +80,15 @@ router.delete("/:customerId/delete", async (req, res) => {
 });
 
 // Xoá toàn bộ giỏ hàng theo customerId
-router.delete("/:customerId/clear", async (req, res) => {
+router.delete("/clear/:customerId", async (req, res) => {
   try {
-    await Cart.deleteMany({ customerId: req.params.customerId });
-    res.json({ message: "Cleared" });
+    const deleted = await Cart.findOneAndDelete({ customerId: req.params.customerId });
+    if (!deleted) return res.status(404).json({ message: "Không tìm thấy giỏ hàng để xoá" });
+    res.json({ message: "Đã xoá giỏ hàng thành công" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;

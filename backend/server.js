@@ -21,6 +21,8 @@ const productDescriptionRoutes = require("./routes/productDescription");
 const cartRoutes = require("./routes/cart");
 const addressRoutes = require("./routes/addressRoutes");
 const orderPublicRoutes = require("./routes/orderPublicRoutes");
+const notificationRoutes = require("./routes/notifications");
+const passwordResetRoutes = require("./routes/authRoutes");
 
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/product-details", productDetailRoutes);
@@ -33,6 +35,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/cart", cartRoutes);
 app.use("/api/addresses", addressRoutes);
 app.use("/api/orders", orderPublicRoutes);
+app.use("/api/notifications", notificationRoutes); 
+app.use("/api/auth", passwordResetRoutes);  
+
 app.get("/", (req, res) => {
   res.send("Lâm Vũ Nè 🚀");
 });
