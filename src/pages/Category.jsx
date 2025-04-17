@@ -1,11 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import FilterSidebar from "../components/FilterSidebar";
-import useProducts from "../hooks/useProducts";
 import "../styles/CategoryPage.css";
 
+const API_URL = "http://localhost:5000/api/products";
+
 const Category = () => {
-  const { products, loading, error } = useProducts();
+  const { categoryCode } = useParams();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchProductsByCategory = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${API_URL}/category/${categoryCode}`);
+        setProducts(res.data);
+        setError("");
+      } catch (err) {
+        setError("Không thể tải sản phẩm.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductsByCategory();
+  }, [categoryCode]);
 
   return (
     <div className="category-page">
@@ -17,6 +41,8 @@ const Category = () => {
             <p>Đang tải...</p>
           ) : error ? (
             <p>{error}</p>
+          ) : products.length === 0 ? (
+            <p>Không có sản phẩm nào trong danh mục này.</p>
           ) : (
             <div className="product-grid">
               {products.map((product) => (

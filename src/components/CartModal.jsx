@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 import "../styles/CartModal.css";
 import colorMap from "../utils/colorMap";
+import { useNavigate } from "react-router-dom";
 
 const CartModal = ({ onClose }) => {
   const {
@@ -13,11 +14,17 @@ const CartModal = ({ onClose }) => {
 
   const customer = JSON.parse(localStorage.getItem("customer"));
   const customerId = customer?._id;
+  const navigate = useNavigate();
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  const handleCheckout = () => {
+    onClose(); // đóng modal trước
+    navigate("/checkout"); // chuyển trang
+  };
 
   return (
     <div className="cart-modal-overlay" onClick={onClose}>
@@ -113,7 +120,9 @@ const CartModal = ({ onClose }) => {
                 <button className="clear-btn" onClick={clearCart}>
                   Xoá tất cả
                 </button>
-                <button className="checkout-btn">Thanh toán</button>
+                <button className="checkout-btn" onClick={handleCheckout}>
+                  Thanh toán
+                </button>
               </div>
             </div>
           </>

@@ -149,4 +149,19 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// 🔹 Lấy sản phẩm theo mã danh mục
+router.get("/category/:categoryCode", async (req, res) => {
+  try {
+    const category = await Category.findOne({ categoryCode: req.params.categoryCode });
+    if (!category) return res.status(404).json({ message: "Danh mục không tồn tại" });
+
+    const products = await Product.find({ category: category._id });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi khi lấy sản phẩm theo danh mục", error: err.message });
+  }
+});
+
+
+
 module.exports = router;

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../styles/Checkout.css";
+import getColorNameFromCode from "../utils/getColorNameFromCode";
 
-const colorMap = {
-  "#000000": "Đen",
-  "#ffffff": "Trắng",
-  // ... thêm các mã màu và tên tương ứng khác
-};
+const API_ADDRESS = "http://localhost:5000/api/addresses";
+const API_ORDER = "http://localhost:5000/api/orders";
 
 const Checkout = () => {
   const customer = JSON.parse(localStorage.getItem("customer"));
@@ -13,123 +12,126 @@ const Checkout = () => {
 
   const [cartItems, setCartItems] = useState([]);
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState("");
 
   useEffect(() => {
     if (customerId) {
-      fetchCart();
       fetchAddresses();
+      fetchCartItems();
     }
   }, [customerId]);
 
-  const fetchCart = async () => {
+  const fetchAddresses = async () => {
+    try {
+      const res = await axios.get(`${API_ADDRESS}/${customerId}`);
+      setAddresses(res.data);
+      if (res.data.length > 0) {
+        setSelectedAddress(res.data[0].fullAddress);
+      }
+    } catch (err) {
+      console.error("Lỗi khi lấy địa chỉ:", err);
+    }
+  };
+
+  const fetchCartItems = async () => {
     try {
       const res = await axios.get(`http://localhost:5000/api/cart/${customerId}`);
       setCartItems(res.data);
     } catch (err) {
-      console.error("Lỗi lấy giỏ hàng:", err);
+      console.error("Lỗi khi lấy giỏ hàng:", err);
     }
   };
 
-  const fetchAddresses = async () => {
+  const handlePlaceOrder = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/addresses/${customerId}`);
-      setAddresses(res.data);
-      setSelectedAddress(res.data[0]?._id || null); // chọn địa chỉ đầu tiên nếu có
+      const orderItems = cartItems.map((item) => ({
+        productName: item.name, // đảm bảo tên truyền đúng
+        quantity: item.quantity,
+        price: item.price,
+        color: item.selectedColor,
+        size: item.selectedSize,
+      }));
+      const totalAmount = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+
+      await axios.post(API_ORDER, {
+        customer: customerId,
+        items: orderItems,
+        totalAmount,
+      });
+
+      alert("Đặt hàng thành công!");
     } catch (err) {
-      console.error("Lỗi lấy địa chỉ:", err);
+      console.error("Lỗi khi đặt hàng:", err);
+      alert("Đặt hàng thất bại.");
     }
   };
 
-  const total = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
+  const formatCurrency = (amount) =>
+    amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="checkout-container">
       <h2>Thanh Toán</h2>
 
-      <h3>1. Địa chỉ giao hàng</h3>
-      {addresses.length === 0 ? (
-        <p>Chưa có địa chỉ. Vui lòng thêm địa chỉ trong Hồ sơ.</p>
-      ) : (
-        <div>
-          <select
-            value={selectedAddress}
-            onChange={(e) => setSelectedAddress(e.target.value)}
-            style={{ padding: "8px", marginBottom: "10px" }}
-          >
-            {addresses.map((addr) => (
-              <option key={addr._id} value={addr._id}>
-                {addr.label ? `${addr.label} - ` : ""}{addr.fullAddress}
-              </option>
-            ))}
-          </select>
-          <div
-            style={{
-              backgroundColor: "#f0f0f0",
-              padding: "10px 15px",
-              marginBottom: "20px",
-              borderRadius: "5px"
-            }}
-          >
-            {addresses.find((a) => a._id === selectedAddress)?.label && (
-              <strong>{addresses.find((a) => a._id === selectedAddress)?.label}</strong>
-            )}
-            <p style={{ margin: 0 }}>
-              {addresses.find((a) => a._id === selectedAddress)?.fullAddress}
-            </p>
-          </div>
-        </div>
-      )}
-
-      <h3>2. Sản phẩm</h3>
-      <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
-        <thead>
-          <tr style={{ backgroundColor: "#f2f2f2" }}>
-            <th style={thStyle}>Tên</th>
-            <th style={thStyle}>Phân loại</th>
-            <th style={thStyle}>Số lượng</th>
-            <th style={thStyle}>Giá</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cartItems.map((item, index) => (
-            <tr key={index}>
-              <td style={tdStyle}>{item.name}</td>
-              <td style={tdStyle}>{colorMap[item.selectedColor] || item.selectedColor} / {item.selectedSize}</td>
-              <td style={tdStyle}>{item.quantity}</td>
-              <td style={tdStyle}>{(item.quantity * item.price).toLocaleString()} đ</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div style={{ textAlign: "right", fontWeight: "bold", fontSize: "18px", marginBottom: "20px" }}>
-        Tổng cộng: {total.toLocaleString()} đ
+      <div className="checkout-section">
+        <h3>1. Địa chỉ giao hàng</h3>
+        {addresses.length === 0 ? (
+          <p>Chưa có địa chỉ. Vui lòng thêm địa chỉ trong Hồ sơ.</p>
+        ) : (
+          <>
+            <select
+              value={selectedAddress}
+              onChange={(e) => setSelectedAddress(e.target.value)}
+              className="address-select"
+            >
+              {addresses.map((addr) => (
+                <option key={addr._id} value={addr.fullAddress}>
+                  {addr.fullAddress}
+                </option>
+              ))}
+            </select>
+            <div className="selected-address">{selectedAddress}</div>
+          </>
+        )}
       </div>
 
-      <button style={{
-        backgroundColor: "#007bff",
-        color: "white",
-        padding: "10px 20px",
-        border: "none",
-        borderRadius: "4px",
-        cursor: "pointer"
-      }}>
+      <div className="checkout-section">
+        <h3>2. Sản phẩm</h3>
+        <table className="checkout-table">
+          <thead>
+            <tr>
+              <th>Tên</th>
+              <th>Phân loại</th>
+              <th>Số lượng</th>
+              <th>Giá</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cartItems.map((item, idx) => (
+              <tr key={idx}>
+                <td>{item.name}</td>
+                <td>{getColorNameFromCode(item.selectedColor)} / {item.selectedSize}</td>
+                <td>{item.quantity}</td>
+                <td>{formatCurrency(item.price * item.quantity)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="checkout-total">
+          Tổng cộng:{" "}
+          <strong>
+            {formatCurrency(
+              cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+            )}
+          </strong>
+        </div>
+      </div>
+
+      <button className="checkout-button" onClick={handlePlaceOrder}>
         Xác nhận đặt hàng
       </button>
     </div>
   );
-};
-
-const thStyle = {
-  padding: "12px",
-  borderBottom: "1px solid #ccc",
-  textAlign: "left"
-};
-
-const tdStyle = {
-  padding: "12px",
-  borderBottom: "1px solid #eee"
 };
 
 export default Checkout;

@@ -20,6 +20,7 @@ const adminOrdersRoute = require("./routes/adminOrders");
 const productDescriptionRoutes = require("./routes/productDescription");
 const cartRoutes = require("./routes/cart");
 const addressRoutes = require("./routes/addressRoutes");
+const orderPublicRoutes = require("./routes/orderPublicRoutes");
 
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/product-details", productDetailRoutes);
@@ -31,7 +32,7 @@ app.use("/api/product-descriptions", productDescriptionRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/cart", cartRoutes);
 app.use("/api/addresses", addressRoutes);
-
+app.use("/api/orders", orderPublicRoutes);
 app.get("/", (req, res) => {
   res.send("Lâm Vũ Nè 🚀");
 });

@@ -41,7 +41,7 @@ function App() {
                     }
                   />
                   <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="/category" element={<Category />} />
+                  <Route path="/category/:categoryCode" element={<Category />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/CustomerProfile" element={<CustomerProfile />} />
                   <Route path="/order-management" element={<CustomerProfile />} />
