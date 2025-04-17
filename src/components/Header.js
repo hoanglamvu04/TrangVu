@@ -2,19 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 import AuthModal from "../components/AuthModal/AuthModal";
+import CartModal from "./CartModal";
 
 const Header = () => {
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [customer, setCustomer] = useState(null);
+  const [showCart, setShowCart] = useState(false); // ✅ modal giỏ hàng
 
-  // Kiểm tra đăng nhập khi vừa vào trang
+  // Kiểm tra đăng nhập khi vào trang
   useEffect(() => {
     const stored = localStorage.getItem("customer");
     if (stored) setCustomer(JSON.parse(stored));
   }, []);
 
-  // Theo dõi khi đăng nhập thành công (localStorage được set)
+  // Theo dõi sự thay đổi localStorage
   useEffect(() => {
     const handleStorageChange = () => {
       const stored = localStorage.getItem("customer");
@@ -25,7 +27,7 @@ const Header = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // Click biểu tượng người dùng
+  // Xử lý icon người dùng
   const handleUserIconClick = () => {
     const stored = localStorage.getItem("customer");
     if (stored) {
@@ -63,7 +65,7 @@ const Header = () => {
           </div>
 
           <div className="user-actions">
-            {/* Chỉ giữ một icon người dùng xử lý logic */}
+            {/* 👤 Người dùng */}
             <span
               className="icon"
               onClick={handleUserIconClick}
@@ -72,10 +74,12 @@ const Header = () => {
               👤
             </span>
 
-            <span className="icon cart-icon" onClick={() => navigate("/cart")}>
+            {/* 🛒 Giỏ hàng */}
+            <span className="icon cart-icon" onClick={() => setShowCart(true)}>
               🛒
             </span>
 
+            {/* ❤️ Yêu thích */}
             <span className="icon" onClick={() => navigate("/wishlist")}>
               ❤️
             </span>
@@ -86,7 +90,11 @@ const Header = () => {
         </div>
       </div>
 
+      {/* Modal đăng nhập */}
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
+      {/* Modal giỏ hàng */}
+      {showCart && <CartModal onClose={() => setShowCart(false)} />}
     </header>
   );
 };

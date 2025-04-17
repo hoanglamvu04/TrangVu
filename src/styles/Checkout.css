@@ -1,0 +1,41 @@
+.checkout-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+  }
+  
+  .checkout-section {
+    margin-top: 30px;
+  }
+  
+  .checkout-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .checkout-table th,
+  .checkout-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .checkout-footer {
+    margin-top: 30px;
+    text-align: right;
+  }
+  
+  .checkout-submit {
+    background: #2e86de;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .checkout-success {
+    max-width: 600px;
+    margin: 60px auto;
+    text-align: center;
+  }
+  

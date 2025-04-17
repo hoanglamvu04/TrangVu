@@ -12,34 +12,42 @@ const ProductCard = ({ product }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalAction, setModalAction] = useState("buy");
   const [selectedColor, setSelectedColor] = useState(null);
-  const [displayImage, setDisplayImage] = useState(""); // sẽ set bằng image hoặc màu
-
+  const [displayImage, setDisplayImage] = useState("");
   const [colors, setColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [colorImages, setColorImages] = useState({});
 
   useEffect(() => {
     setDisplayImage(product.image ? `${API_URL}${product.image}` : "/assets/default.jpg");
     setSelectedColor(null);
-    fetchColors();
+    fetchDetails();
   }, [product]);
 
-  const fetchColors = async () => {
+  const fetchDetails = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/product-details/${product.code}`);
       const uniqueColors = [];
-      const seen = new Set();
-      res.data.forEach((d) => {
-        if (d.colorCode && !seen.has(d.colorCode)) {
-          seen.add(d.colorCode);
+      const seenColors = new Set();
+      const seenSizes = new Set();
+      const colorImgMap = {};
+
+      res.data.forEach((detail) => {
+        if (detail.colorCode && !seenColors.has(detail.colorCode)) {
+          seenColors.add(detail.colorCode);
           uniqueColors.push({
-            code: d.colorCode,
-            name: d.colorName,
-            image: d.image ? `${API_URL}${d.image}` : null,
+            code: detail.colorCode,
+            name: detail.colorName,
           });
+          colorImgMap[detail.colorCode] = `${API_URL}${detail.image}`;
         }
+        if (detail.size) seenSizes.add(detail.size);
       });
+
       setColors(uniqueColors);
+      setSizes(Array.from(seenSizes));
+      setColorImages(colorImgMap);
     } catch (err) {
-      console.error("Lỗi khi tải màu:", err);
+      console.error("Lỗi khi tải chi tiết sản phẩm:", err);
     }
   };
 
@@ -49,8 +57,13 @@ const ProductCard = ({ product }) => {
       setDisplayImage(product.image ? `${API_URL}${product.image}` : "/assets/default.jpg");
     } else {
       setSelectedColor(color);
-      setDisplayImage(color.image || (product.image ? `${API_URL}${product.image}` : "/assets/default.jpg"));
+      setDisplayImage(colorImages?.[color.code] || `${API_URL}${product.image}`);
     }
+  };
+
+  const openModal = (type) => {
+    setModalAction(type);
+    setShowModal(true);
   };
 
   return (
@@ -85,9 +98,7 @@ const ProductCard = ({ product }) => {
               ></span>
             );
           })}
-          {colors.length > 4 && (
-            <span className="color-more">+{colors.length - 4}</span>
-          )}
+          {colors.length > 4 && <span className="color-more">+{colors.length - 4}</span>}
         </div>
       )}
 
@@ -108,29 +119,22 @@ const ProductCard = ({ product }) => {
       </div>
 
       <div className="product-buttons">
-        <button
-          className="buy-now-btn"
-          onClick={() => {
-            setModalAction("buy");
-            setShowModal(true);
-          }}
-        >
+        <button className="buy-now-btn" onClick={() => openModal("buy")}>
           Mua ngay
         </button>
-        <button
-          className="add-to-cart-btn"
-          onClick={() => {
-            setModalAction("cart");
-            setShowModal(true);
-          }}
-        >
+        <button className="add-to-cart-btn" onClick={() => openModal("cart")}>
           <FontAwesomeIcon icon={faShoppingCart} />
         </button>
       </div>
 
       {showModal && (
         <ProductQuickViewModal
-          product={product}
+          product={{
+            ...product,
+            colors,
+            sizes,
+            colorImages,
+          }}
           onClose={() => setShowModal(false)}
           actionType={modalAction}
         />

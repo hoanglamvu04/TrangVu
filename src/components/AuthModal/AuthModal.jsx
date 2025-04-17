@@ -8,6 +8,7 @@ const AuthModal = ({ onClose }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     name: '',
     phone: '',
   });
@@ -33,13 +34,22 @@ const AuthModal = ({ onClose }) => {
         return setError("Vui lòng nhập email và mật khẩu!");
       }
     } else {
-      if (!formData.name || !formData.phone || !formData.email || !formData.password) {
+      if (
+        !formData.name ||
+        !formData.phone ||
+        !formData.email ||
+        !formData.password ||
+        !formData.confirmPassword
+      ) {
         return setError("Vui lòng nhập đầy đủ thông tin!");
       }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-          return setError("Email không đúng định dạng!");
-        }
+      if (!emailRegex.test(formData.email)) {
+        return setError("Email không đúng định dạng!");
+      }
+      if (formData.password !== formData.confirmPassword) {
+        return setError("Mật khẩu xác nhận không khớp!");
+      }
     }
 
     setLoading(true);
@@ -93,12 +103,48 @@ const AuthModal = ({ onClose }) => {
         <form className="auth-form" onSubmit={handleSubmit}>
           {!isLogin && (
             <>
-              <input type="text" name="name" placeholder="Tên của bạn" value={formData.name} onChange={handleInputChange} />
-              <input type="text" name="phone" placeholder="SĐT của bạn" value={formData.phone} onChange={handleInputChange} />
+              <input
+                type="text"
+                name="name"
+                placeholder="Tên của bạn"
+                value={formData.name}
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="SĐT của bạn"
+                value={formData.phone}
+                onChange={handleInputChange}
+              />
             </>
           )}
-          <input type="text" name="email" placeholder="Email của bạn" value={formData.email} onChange={handleInputChange} />
-          <input type="password" name="password" placeholder="Mật khẩu" value={formData.password} onChange={handleInputChange} />
+
+          <input
+            type="text"
+            name="email"
+            placeholder="Email của bạn"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Mật khẩu"
+            value={formData.password}
+            onChange={handleInputChange}
+          />
+
+          {!isLogin && (
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Xác nhận mật khẩu"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+            />
+          )}
 
           {isLogin && (
             <div className="forgot-password">

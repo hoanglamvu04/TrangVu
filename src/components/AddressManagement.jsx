@@ -1,81 +1,129 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddressPicker from "../components/AddressPicker";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import axios from "axios";
+const API_URL = "http://localhost:5000/api/addresses";
 
 const AddressManagement = () => {
-  const [addresses, setAddresses] = useState([
-    { id: 1, label: "Nhà riêng", address: "Số 18-20/322 Nhân Mỹ - Mỹ Đình 1 - Quận Nam Từ Liêm - TP.Hà Nội." },
-    { id: 2, label: "Văn phòng", address: "Km 3 + 350 Đường Phan Trọng Tuệ - Huyện Thanh Trì - TP.Hà Nội" }
-  ]);
+  const [addresses, setAddresses] = useState([]);
   const [newLabel, setNewLabel] = useState("");
-  const [newAddress, setNewAddress] = useState("");
+  const [newDetail, setNewDetail] = useState("");
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
+  const [resetTrigger, setResetTrigger] = useState(0);
 
-  const handleAddAddress = () => {
-    if (newLabel && newAddress) {
-      setAddresses([
-        ...addresses,
-        { id: Date.now(), label: newLabel, address: newAddress }
-      ]);
-      resetForm();
+  const customer = JSON.parse(localStorage.getItem("customer"));
+  const customerId = customer?._id;
+
+  useEffect(() => {
+    if (customerId) fetchAddresses();
+  }, [customerId]);
+
+  const fetchAddresses = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/${customerId}`);
+      setAddresses(res.data);
+    } catch (err) {
+      console.error("Lỗi khi lấy địa chỉ:", err);
     }
   };
 
-  const handleEditAddress = (index) => {
-    const current = addresses[index];
-    setEditIndex(index);
-    setNewLabel(current.label);
-    setNewAddress(current.address);
+  const handleAddAddress = async () => {
+    if (!province || !district || !ward || !newDetail || !customerId) return;
+    try {
+      await axios.post(API_URL, {
+        customerId,
+        label: newLabel,
+        province,
+        district,
+        ward,
+        detail: newDetail,
+      });
+      fetchAddresses();
+      resetForm();
+    } catch (err) {
+      console.error("Lỗi khi thêm địa chỉ:", err);
+    }
   };
 
-  const handleSaveEdit = () => {
-    const updated = [...addresses];
-    updated[editIndex] = {
-      ...updated[editIndex],
-      label: newLabel,
-      address: newAddress,
-    };
-    setAddresses(updated);
-    resetForm();
+  const handleEditAddress = (addr) => {
+    setEditId(addr._id);
+    setNewLabel(addr.label || "");
+    setNewDetail(addr.detail || "");
+    setProvince(addr.province || "");
+    setDistrict(addr.district || "");
+    setWard(addr.ward || "");
   };
 
-  const handleDeleteAddress = (id) => {
-    setAddresses(addresses.filter((a) => a.id !== id));
+  const handleSaveEdit = async () => {
+    if (!province || !district || !ward || !newDetail) return;
+    try {
+      await axios.put(`${API_URL}/${editId}`, {
+        label: newLabel,
+        province,
+        district,
+        ward,
+        detail: newDetail,
+      });
+      fetchAddresses();
+      resetForm();
+    } catch (err) {
+      console.error("Lỗi khi cập nhật địa chỉ:", err);
+    }
+  };
+
+  const handleDeleteAddress = async (id) => {
+    const confirmed = window.confirm("Bạn có chắc chắn muốn xoá địa chỉ này không?");
+    if (!confirmed) return;
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      fetchAddresses();
+    } catch (err) {
+      console.error("Lỗi khi xoá địa chỉ:", err);
+    }
   };
 
   const resetForm = () => {
-    setEditIndex(null);
+    setEditId(null);
     setNewLabel("");
-    setNewAddress("");
+    setNewDetail("");
     setProvince("");
     setDistrict("");
     setWard("");
+    setResetTrigger((prev) => prev + 1);
   };
 
   return (
     <div className="address-management">
       <h2>Quản Lý Địa Chỉ</h2>
       <div className="address-list">
-        {addresses.map((addr, index) => (
-          <div key={addr.id} className="address-card">
+        {addresses.map((addr) => (
+          <div key={addr._id} className="address-card">
             <div className="address-info">
-              <strong>{addr.label}</strong>
-              <p>{addr.address}</p>
+              <strong>{addr.label || "(Không có ghi chú)"}</strong>
+              <p>{addr.fullAddress}</p>
             </div>
             <div className="anddress-actios">
-              <FaEdit className="edit-icon" onClick={() => handleEditAddress(index)} />
-              <FaTrash className="delete-icon" onClick={() => handleDeleteAddress(addr.id)} />
+              <FaEdit
+                className="edit-icon"
+                style={{ marginRight: "10px", cursor: "pointer", fontSize: "18px" }}
+                onClick={() => handleEditAddress(addr)}
+              />
+              <FaTrash
+                className="delete-icon"
+                style={{ cursor: "pointer", fontSize: "18px" }}
+                onClick={() => handleDeleteAddress(addr._id)}
+              />
             </div>
+
           </div>
         ))}
       </div>
 
       <h2>Thêm Địa Chỉ Mới</h2>
       <div className="address-form">
-        {/* Ghi chú (Nhà riêng, Văn phòng...) */}
         <input
           type="text"
           placeholder="Ghi chú (Nhà riêng, Văn phòng...)"
@@ -83,31 +131,32 @@ const AddressManagement = () => {
           onChange={(e) => setNewLabel(e.target.value)}
         />
 
-        {/* Chọn địa chỉ theo thứ tự Tỉnh → Huyện → Xã */}
         <div className="address-picker-row">
           <AddressPicker
-            reverseOrder={false}
+            resetTrigger={resetTrigger}
             onChange={({ ward, district, province }) => {
               setWard(ward);
               setDistrict(district);
               setProvince(province);
-              setNewAddress(`${province}, ${district}, ${ward}`);
             }}
           />
         </div>
 
-        {/* Địa chỉ cụ thể như số nhà, ngõ */}
         <input
           type="text"
           placeholder="Nhập địa chỉ cụ thể (số nhà, ngõ...)"
-          value={newAddress}
-          onChange={(e) => setNewAddress(e.target.value)}
+          value={newDetail}
+          onChange={(e) => setNewDetail(e.target.value)}
         />
 
-        {editIndex !== null ? (
-          <button className="save-btn" onClick={handleSaveEdit}>Lưu thay đổi</button>
+        {editId ? (
+          <button className="save-btn" onClick={handleSaveEdit}>
+            Lưu thay đổi
+          </button>
         ) : (
-          <button className="add-btn" onClick={handleAddAddress}><FaPlus /> Thêm Địa Chỉ</button>
+          <button className="add-btn" onClick={handleAddAddress}>
+            <FaPlus /> Thêm Địa Chỉ
+          </button>
         )}
       </div>
     </div>
