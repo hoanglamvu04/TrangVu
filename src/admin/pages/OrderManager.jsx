@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/admin.css"; // Đổi sang file dùng chung
+import "../styles/admin.css";
 import AddOrderModal from "../components/AddOrderModal";
 import EditOrderModal from "../components/EditOrderModal";
 import OrderDetailModal from "../components/OrderDetailModal";
+import AddressModal from "../components/AddressModal";
 
 const API_URL = "http://localhost:5000";
 
@@ -19,13 +20,32 @@ const statusLabels = {
 const OrderManager = () => {
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
+  const [search, setSearch] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const [viewingOrder, setViewingOrder] = useState(null);
+  const [addressModal, setAddressModal] = useState(null);
+
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+
+  // Phân trang
+  const itemsPerPage = 30;
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      setShowHeader(currentScroll < lastScrollTop || currentScroll < 10);
+      setLastScrollTop(currentScroll <= 0 ? 0 : currentScroll);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollTop]);
 
   const fetchOrders = async () => {
     try {
@@ -65,13 +85,26 @@ const OrderManager = () => {
   };
 
   const handleViewAddress = (order) => {
-    alert(`Xem địa chỉ giao hàng của khách: ${order.customer?.fullName}`);
+    const customerName = order.customer?.fullName || "Không rõ";
+    const address = order.address || "Không có địa chỉ";
+    setAddressModal({ name: customerName, address });
   };
 
-  const filteredOrders =
-    statusFilter === "All"
-      ? orders
-      : orders.filter((order) => order.status === statusFilter);
+  const filteredOrders = orders
+    .filter((order) =>
+      statusFilter === "All" || order.status === statusFilter
+    )
+    .filter((order) =>
+      order.orderCode?.toLowerCase().includes(search.toLowerCase()) ||
+      order.customer?.fullName?.toLowerCase().includes(search.toLowerCase())
+    );
+
+  // Phân trang
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const statusCounts = {
     All: orders.length,
@@ -84,25 +117,40 @@ const OrderManager = () => {
 
   return (
     <div className="admin-page">
-      <h2>Quản lý đơn hàng</h2>
+      <div className={`section-header ${showHeader ? "visible" : "hidden"}`}>
+        <h2 className="admin-title">Quản lý đơn hàng</h2>
+        <div className="admin-header-controls">
+          <input
+            type="text"
+            placeholder="Tìm theo mã đơn hoặc tên khách hàng..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="admin-search-box"
+          />
+          <button className="add-btn" onClick={() => setShowAddModal(true)}>
+            + Thêm đơn hàng
+          </button>
+        </div>
+      </div>
 
-      {/* Bộ lọc trạng thái */}
       <div className="filter-group">
         {Object.keys(statusLabels).map((status) => (
           <button
             key={status}
             className={`order-manager-filter-btn ${statusFilter === status ? "active" : ""} ${status.toLowerCase()}`}
-            onClick={() => setStatusFilter(status)}
+            onClick={() => {
+              setStatusFilter(status);
+              setCurrentPage(1);
+            }}
           >
             {statusLabels[status]} ({statusCounts[status]})
           </button>
         ))}
-        <button className="add-btn" onClick={() => setShowAddModal(true)}>
-          + Thêm đơn hàng
-        </button>
       </div>
 
-      {/* Bảng đơn hàng */}
       <table className="admin-table">
         <thead>
           <tr>
@@ -115,7 +163,7 @@ const OrderManager = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredOrders.map((order) => (
+          {paginatedOrders.map((order) => (
             <tr key={order._id}>
               <td>{order.orderCode}</td>
               <td>{order.customer?.fullName}</td>
@@ -145,7 +193,18 @@ const OrderManager = () => {
         </tbody>
       </table>
 
-      {/* Modal thêm đơn hàng */}
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            className={currentPage === i + 1 ? "active" : ""}
+            onClick={() => setCurrentPage(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+
       {showAddModal && (
         <AddOrderModal
           onClose={() => setShowAddModal(false)}
@@ -156,7 +215,6 @@ const OrderManager = () => {
         />
       )}
 
-      {/* Modal sửa đơn hàng */}
       {editingOrder && (
         <EditOrderModal
           order={editingOrder}
@@ -168,11 +226,18 @@ const OrderManager = () => {
         />
       )}
 
-      {/* Modal xem chi tiết đơn hàng */}
       {viewingOrder && (
         <OrderDetailModal
           order={viewingOrder}
           onClose={() => setViewingOrder(null)}
+        />
+      )}
+
+      {addressModal && (
+        <AddressModal
+          customerName={addressModal.name}
+          address={addressModal.address}
+          onClose={() => setAddressModal(null)}
         />
       )}
     </div>

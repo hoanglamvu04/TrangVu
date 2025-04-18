@@ -1,23 +1,36 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../styles/admin.css"; // Đã gộp CSS
+import "../styles/admin.css";
+import CategoryModal from "../components/CategoryModal";
 
 const API_URL = "http://localhost:5000";
+const ITEMS_PER_PAGE = 30;
 
 const CategoryManager = () => {
   const [categories, setCategories] = useState([]);
-  const [editingId, setEditingId] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const [form, setForm] = useState({
-    categoryCode: "",
-    name: "",
-    description: "",
-    status: "Active",
-  });
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const current = window.scrollY;
+      setShowHeader(current < lastScrollTop || current < 10);
+      setLastScrollTop(current <= 0 ? 0 : current);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollTop]);
 
   const fetchCategories = async () => {
     try {
@@ -28,35 +41,9 @@ const CategoryManager = () => {
     }
   };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async () => {
-    try {
-      if (editingId) {
-        await axios.put(`${API_URL}/api/categories/${editingId}`, form);
-        alert("Cập nhật danh mục thành công!");
-      } else {
-        await axios.post(`${API_URL}/api/categories`, form);
-        alert("Thêm danh mục thành công!");
-      }
-      setForm({ categoryCode: "", name: "", description: "", status: "Active" });
-      setEditingId(null);
-      fetchCategories();
-    } catch (err) {
-      alert("Lỗi xử lý: " + err.message);
-    }
-  };
-
   const handleEdit = (cat) => {
-    setForm({
-      categoryCode: cat.categoryCode,
-      name: cat.name,
-      description: cat.description,
-      status: cat.status,
-    });
-    setEditingId(cat._id);
+    setEditingCategory(cat);
+    setShowModal(true);
   };
 
   const handleDelete = async (id) => {
@@ -70,36 +57,58 @@ const CategoryManager = () => {
     }
   };
 
+  const filteredCategories = categories.filter((cat) => {
+    const matchesSearch =
+      cat.name.toLowerCase().includes(search.toLowerCase()) ||
+      cat.categoryCode.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus =
+      statusFilter === "All" || cat.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalPages = Math.ceil(filteredCategories.length / ITEMS_PER_PAGE);
+  const paginatedCategories = filteredCategories.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   return (
     <div className="admin-page">
-      <h2>Quản lý danh mục</h2>
-
-      <div className="admin-form">
-        <input
-          name="categoryCode"
-          value={form.categoryCode}
-          placeholder="Mã danh mục"
-          onChange={handleChange}
-        />
-        <input
-          name="name"
-          value={form.name}
-          placeholder="Tên danh mục"
-          onChange={handleChange}
-        />
-        <textarea
-          name="description"
-          value={form.description}
-          placeholder="Mô tả"
-          onChange={handleChange}
-        ></textarea>
-        <select name="status" value={form.status} onChange={handleChange}>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-        </select>
-        <button className="admin-btn btn-submit" onClick={handleSubmit}>
-          {editingId ? "Cập nhật" : "Thêm danh mục"}
-        </button>
+      <div className={`section-header ${showHeader ? "visible" : "hidden"}`}>
+        <h2 className="admin-title">Quản lý danh mục</h2>
+        <div className="admin-header-controls">
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo mã hoặc tên danh mục..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="admin-search-box"
+          />
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="admin-filter-dropdown"
+          >
+            <option value="All">Tất cả</option>
+            <option value="Active">Đang hoạt động</option>
+            <option value="Inactive">Ngưng hoạt động</option>
+          </select>
+          <button
+            className="add-btn"
+            onClick={() => {
+              setEditingCategory(null);
+              setShowModal(true);
+            }}
+          >
+            + Thêm danh mục
+          </button>
+        </div>
       </div>
 
       <table className="admin-table">
@@ -113,20 +122,60 @@ const CategoryManager = () => {
           </tr>
         </thead>
         <tbody>
-          {categories.map((cat) => (
+          {paginatedCategories.map((cat) => (
             <tr key={cat._id}>
               <td>{cat.categoryCode}</td>
               <td>{cat.name}</td>
               <td>{cat.description}</td>
               <td>{cat.status}</td>
               <td>
-                <button className="admin-btn btn-edit" onClick={() => handleEdit(cat)}>Sửa</button>
-                <button className="admin-btn btn-delete" onClick={() => handleDelete(cat._id)}>Xoá</button>
+                <button
+                  className="admin-btn btn-edit"
+                  onClick={() => handleEdit(cat)}
+                >
+                  Sửa
+                </button>
+                <button
+                  className="admin-btn btn-delete"
+                  onClick={() => handleDelete(cat._id)}
+                >
+                  Xoá
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Phân trang */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Modal danh mục */}
+      {showModal && (
+        <CategoryModal
+          category={editingCategory}
+          onClose={() => {
+            setShowModal(false);
+            setEditingCategory(null);
+          }}
+          onSuccess={() => {
+            setShowModal(false);
+            fetchCategories();
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -1,0 +1,16 @@
+.main-wrapperwith-menu .main-wrapper {
+    margin-top: 650px;
+  }
+  
+.main-wrapper.without-menu .main-wrapper {
+    margin-top: 0;
+  }
+  
+  body.with-menu .main-wrapper {
+    margin-top: 65px;
+  }
+  
+  body.without-menu .main-wrapper {
+    margin-top: 0;
+  }
+  

@@ -1,0 +1,18 @@
+.search-page-wrapper {
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1600px;
+}
+
+.search-page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.search-page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}

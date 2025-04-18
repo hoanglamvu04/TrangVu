@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import "../styles/ProductCategories.css"; 
+import React, { useState, useRef, useEffect } from "react";
+import "../styles/ProductCategories.css";
 
 const categoriesData = {
   men: [
@@ -28,7 +28,7 @@ const categoriesData = {
 const ProductCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState("men");
   const scrollRef = useRef(null);
-
+  const [showArrows, setShowArrows] = useState(false);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -42,6 +42,19 @@ const ProductCategories = () => {
     }
   };
 
+  const checkScrollability = () => {
+    const container = scrollRef.current;
+    if (container) {
+      setShowArrows(container.scrollWidth > container.clientWidth);
+    }
+  };
+
+  useEffect(() => {
+    checkScrollability();
+    window.addEventListener("resize", checkScrollability);
+    return () => window.removeEventListener("resize", checkScrollability);
+  }, [selectedCategory]);
+
   return (
     <div className="product-categories-container">
       <div className="category-switch">
@@ -54,7 +67,7 @@ const ProductCategories = () => {
       </div>
 
       <div className="carousel-container">
-        <button className="scroll-btn left" onClick={scrollLeft}>‹</button>
+        {showArrows && <button className="scroll-btn left" onClick={scrollLeft}>‹</button>}
 
         <div className="categories-grid" ref={scrollRef}>
           {categoriesData[selectedCategory].map((cat, index) => (
@@ -65,7 +78,7 @@ const ProductCategories = () => {
           ))}
         </div>
 
-        <button className="scroll-btn right" onClick={scrollRight}>›</button>
+        {showArrows && <button className="scroll-btn right" onClick={scrollRight}>›</button>}
       </div>
     </div>
   );

@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Address = require("../models/Address");
 
-// Lấy tất cả địa chỉ của 1 khách hàng
 router.get("/:customerId", async (req, res) => {
   try {
     const addresses = await Address.find({ customerId: req.params.customerId });
@@ -12,22 +11,22 @@ router.get("/:customerId", async (req, res) => {
   }
 });
 
-// Thêm địa chỉ mới
 router.post("/", async (req, res) => {
-  const { customerId, label, province, district, ward, detail } = req.body;
+  const { customerId, label, province, district, ward, detail, phoneNumber } = req.body;
 
-  if (!customerId || !province || !district || !ward || !detail) {
+  if (!customerId || !province || !district || !ward || !detail || !phoneNumber) {
     return res.status(400).json({ error: "Thiếu thông tin bắt buộc" });
   }
 
   try {
     const newAddress = new Address({
       customerId,
-      label: label || "", // ⬅️ Cho phép ghi chú trống
+      label: label || "",
       province,
       district,
       ward,
       detail,
+      phoneNumber,
       fullAddress: `${detail}, ${ward}, ${district}, ${province}`
     });
 
@@ -38,11 +37,10 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Cập nhật địa chỉ
 router.put("/:id", async (req, res) => {
-  const { label, province, district, ward, detail } = req.body;
+  const { label, province, district, ward, detail, phoneNumber } = req.body;
 
-  if (!province || !district || !ward || !detail) {
+  if (!province || !district || !ward || !detail || !phoneNumber) {
     return res.status(400).json({ error: "Thiếu thông tin bắt buộc" });
   }
 
@@ -50,11 +48,12 @@ router.put("/:id", async (req, res) => {
     const updated = await Address.findByIdAndUpdate(
       req.params.id,
       {
-        label: label || "", // ⬅️ Cho phép ghi chú trống khi cập nhật
+        label: label || "",
         province,
         district,
         ward,
         detail,
+        phoneNumber,
         fullAddress: `${detail}, ${ward}, ${district}, ${province}`
       },
       { new: true }
