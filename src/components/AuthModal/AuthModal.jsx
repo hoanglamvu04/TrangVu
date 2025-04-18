@@ -18,25 +18,53 @@ const AuthModal = ({ onClose }) => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [step, setStep] = useState(1);
 
+  const [validation, setValidation] = useState({
+    phoneValid: true,
+    emailValid: true,
+    passwordLengthValid: true,
+    confirmPasswordMatch: true
+  });
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (name === "phone") {
+      const isValid = /^0\d{9}$/.test(value);
+      setValidation(prev => ({ ...prev, phoneValid: isValid }));
+    }
+    if (name === "email") {
+      setValidation(prev => ({ ...prev, emailValid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) }));
+    }
+    if (name === "password") {
+      setValidation(prev => ({
+        ...prev,
+        passwordLengthValid: value.length >= 6,
+        confirmPasswordMatch: formData.confirmPassword === value
+      }));
+    }
+    if (name === "confirmPassword") {
+      setValidation(prev => ({ ...prev, confirmPasswordMatch: value === formData.password }));
+    }
+  };
+
+  const isRegisterFormValid = () => {
+    const { name, phone, email, password, confirmPassword } = formData;
+    return (
+      name.trim() !== "" &&
+      /^0\d{9}$/.test(phone) &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+      password.length >= 6 &&
+      password === confirmPassword
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     if (isLogin && (!formData.email || !formData.password)) {
       return setError("Vui lòng nhập email và mật khẩu!");
-    }
-    if (!isLogin) {
-      const { name, phone, email, password, confirmPassword } = formData;
-      if (!name || !phone || !email || !password || !confirmPassword)
-        return setError("Vui lòng nhập đầy đủ thông tin!");
-      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))
-        return setError("Email không đúng định dạng!");
-      if (password !== confirmPassword)
-        return setError("Mật khẩu xác nhận không khớp!");
     }
 
     setLoading(true);
@@ -134,12 +162,20 @@ const AuthModal = ({ onClose }) => {
                 <>
                   <input name="name" placeholder="Tên của bạn" value={formData.name} onChange={handleInputChange} />
                   <input name="phone" placeholder="SĐT của bạn" value={formData.phone} onChange={handleInputChange} />
+                  {!validation.phoneValid && <small className="input-error">Số điện thoại phải bắt đầu từ số 0 và đủ 10 chữ số</small>}
                 </>
               )}
               <input name="email" placeholder="Email của bạn" value={formData.email} onChange={handleInputChange} />
+              {!isLogin && !validation.emailValid && <small className="input-error">Email không hợp lệ</small>}
+
               <input type="password" name="password" placeholder="Mật khẩu" value={formData.password} onChange={handleInputChange} />
+              {!isLogin && !validation.passwordLengthValid && <small className="input-error">Mật khẩu phải từ 6 ký tự</small>}
+
               {!isLogin && (
-                <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" value={formData.confirmPassword} onChange={handleInputChange} />
+                <>
+                  <input type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" value={formData.confirmPassword} onChange={handleInputChange} />
+                  {!validation.confirmPasswordMatch && <small className="input-error">Xác nhận mật khẩu chưa đúng</small>}
+                </>
               )}
               {isLogin && (
                 <div className="forgot-password">
@@ -147,7 +183,7 @@ const AuthModal = ({ onClose }) => {
                 </div>
               )}
               {error && <div className="auth-error">{error}</div>}
-              <button className="auth-submit" type="submit" disabled={loading}>
+              <button className="auth-submit" type="submit" disabled={loading || (!isLogin && !isRegisterFormValid())}>
                 {loading ? "Đang xử lý..." : isLogin ? "ĐĂNG NHẬP" : "ĐĂNG KÝ TÀI KHOẢN"}
               </button>
             </form>

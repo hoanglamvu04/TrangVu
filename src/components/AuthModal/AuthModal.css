@@ -225,3 +225,10 @@
     background-color: #ddd;
   }
   
+  .input-error {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+    margin-bottom: 5px;
+  }
+  
