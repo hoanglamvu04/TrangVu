@@ -30,21 +30,19 @@ const AuthModal = ({ onClose }) => {
     setFormData({ ...formData, [name]: value });
 
     if (name === "phone") {
-      const isValid = /^0\d{9}$/.test(value);
-      setValidation(prev => ({ ...prev, phoneValid: isValid }));
+      setValidation(prev => ({ ...prev, phoneValid: /^\d{10,11}$/.test(value) }));
     }
     if (name === "email") {
       setValidation(prev => ({ ...prev, emailValid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) }));
     }
     if (name === "password") {
-      setValidation(prev => ({
-        ...prev,
-        passwordLengthValid: value.length >= 6,
-        confirmPasswordMatch: formData.confirmPassword === value
-      }));
+      setValidation(prev => ({ ...prev, passwordLengthValid: value.length >= 6 }));
     }
     if (name === "confirmPassword") {
       setValidation(prev => ({ ...prev, confirmPasswordMatch: value === formData.password }));
+    }
+    if (name === "password") {
+      setValidation(prev => ({ ...prev, confirmPasswordMatch: formData.confirmPassword === value }));
     }
   };
 
@@ -52,7 +50,7 @@ const AuthModal = ({ onClose }) => {
     const { name, phone, email, password, confirmPassword } = formData;
     return (
       name.trim() !== "" &&
-      /^0\d{9}$/.test(phone) &&
+      /^\d{10,11}$/.test(phone) &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
       password.length >= 6 &&
       password === confirmPassword
@@ -162,7 +160,7 @@ const AuthModal = ({ onClose }) => {
                 <>
                   <input name="name" placeholder="Tên của bạn" value={formData.name} onChange={handleInputChange} />
                   <input name="phone" placeholder="SĐT của bạn" value={formData.phone} onChange={handleInputChange} />
-                  {!validation.phoneValid && <small className="input-error">Số điện thoại phải bắt đầu từ số 0 và đủ 10 chữ số</small>}
+                  {!validation.phoneValid && <small className="input-error">Số điện thoại không hợp lệ</small>}
                 </>
               )}
               <input name="email" placeholder="Email của bạn" value={formData.email} onChange={handleInputChange} />

@@ -91,14 +91,30 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-// API UPLOAD AVATAR
+// ===================== UPLOAD AVATAR =====================
 router.post("/upload-avatar", upload.single("avatar"), (req, res) => {
-    if (!req.file) return res.status(400).json({ message: "Không có file" });
-  
-    const filePath = `/uploads/avatars/${req.file.filename}`;
-    res.status(200).json({ filePath });
-  });
-  
+  if (!req.file) return res.status(400).json({ message: "Không có file" });
 
+  const filePath = `/uploads/avatars/${req.file.filename}`;
+  res.status(200).json({ filePath });
+});
+
+
+// ===================== CHECK EMAIL =====================
+router.post("/check-email", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email không được bỏ trống." });
+  }
+
+  try {
+    const existing = await Customer.findOne({ email });
+    res.json({ exists: !!existing });
+  } catch (err) {
+    console.error("Lỗi check-email:", err);
+    res.status(500).json({ message: "Lỗi server", error: err.message });
+  }
+});
 
 module.exports = router;
