@@ -8,6 +8,7 @@ const API_URL = "http://localhost:5000";
 
 const UserManager = () => {
   const [users, setUsers] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [search, setSearch] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editUser, setEditUser] = useState(null);
@@ -15,13 +16,33 @@ const UserManager = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [lastScrollTop, setLastScrollTop] = useState(0);
 
-  // Phân trang
+  const [promotingId, setPromotingId] = useState(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 30;
 
   useEffect(() => {
     fetchUsers();
+    fetchAdmins();
   }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/admin/users`);
+      setUsers(res.data);
+    } catch (err) {
+      alert("Không thể lấy danh sách khách hàng");
+    }
+  };
+
+  const fetchAdmins = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/admin/all`);
+      setAdmins(res.data);
+    } catch (err) {
+      console.error("Không thể lấy danh sách admin", err);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,15 +53,6 @@ const UserManager = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollTop]);
-
-  const fetchUsers = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/api/admin/users`);
-      setUsers(res.data);
-    } catch (err) {
-      alert("Không thể lấy danh sách khách hàng");
-    }
-  };
 
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xoá tài khoản này?")) {
@@ -57,13 +69,43 @@ const UserManager = () => {
     setEditUser(user);
   };
 
+  const isUserAdmin = (customerCode) => admins.some(a => a.customerCode === customerCode);
+
+  const promoteOrRemoveAdmin = async (customerCode) => {
+    const isAdmin = isUserAdmin(customerCode);
+    const confirmMsg = isAdmin
+      ? `Bạn có chắc muốn gỡ quyền admin khỏi ${customerCode}?`
+      : `Bạn có chắc muốn phân quyền admin cho ${customerCode}?`;
+
+    if (!window.confirm(confirmMsg)) return;
+    setPromotingId(customerCode);
+
+    try {
+      if (isAdmin) {
+        await axios.delete(`${API_URL}/api/admin/remove/${customerCode}`);
+        alert(`Đã gỡ quyền admin khỏi ${customerCode}`);
+      } else {
+        await axios.post(`${API_URL}/api/admin/create`, {
+          admCode: `ADM-${customerCode}`,
+          customerCode,
+        });
+        alert(`Đã phân quyền admin cho ${customerCode}`);
+      }
+      fetchAdmins();
+    } catch (err) {
+      alert("Không thể cập nhật quyền admin");
+      console.error(err);
+    } finally {
+      setPromotingId(null);
+    }
+  };
+
   const filteredUsers = users.filter(
     (user) =>
       user.fullName?.toLowerCase().includes(search.toLowerCase()) ||
       user.email?.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Phân trang
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const paginatedUsers = filteredUsers.slice(
     (currentPage - 1) * usersPerPage,
@@ -81,7 +123,7 @@ const UserManager = () => {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setCurrentPage(1); // reset trang khi tìm kiếm
+              setCurrentPage(1);
             }}
             className="admin-search-box"
           />
@@ -126,14 +168,24 @@ const UserManager = () => {
               <td>{new Date(user.createdAt).toLocaleDateString()}</td>
               <td>
                 <button className="admin-btn btn-edit" onClick={() => handleEdit(user)}>Sửa</button>{" "}
-                <button className="admin-btn btn-delete" onClick={() => handleDelete(user._id)}>Xoá</button>
+                <button className="admin-btn btn-delete" onClick={() => handleDelete(user._id)}>Xoá</button>{" "}
+                <button
+                  className="admin-btn btn-promote"
+                  onClick={() => promoteOrRemoveAdmin(user.customerCode)}
+                  disabled={promotingId === user.customerCode}
+                >
+                  {promotingId === user.customerCode
+                    ? "Đang xử lý..."
+                    : isUserAdmin(user.customerCode)
+                    ? "Gỡ quyền Admin"
+                    : "Phân quyền Admin"}
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Phân trang */}
       {totalPages > 1 && (
         <div className="pagination">
           {Array.from({ length: totalPages }, (_, i) => (

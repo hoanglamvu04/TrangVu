@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "../styles/Modal.css"; // dùng chung với AddUserModal
+import "../styles/Modal.css";
 
 const API_URL = "http://localhost:5000";
 
@@ -34,10 +34,11 @@ const EditUserModal = ({ user, onClose, onSuccess }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div className="modal-content">
         <h3>Sửa thông tin người dùng</h3>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="form-container">
           <input
+            name="fullName"
             type="text"
             placeholder="Họ tên"
             value={fullName}
@@ -45,6 +46,7 @@ const EditUserModal = ({ user, onClose, onSuccess }) => {
             required
           />
           <input
+            name="email"
             type="email"
             placeholder="Email"
             value={email}
@@ -52,6 +54,7 @@ const EditUserModal = ({ user, onClose, onSuccess }) => {
             required
           />
           <input
+            name="phoneNumber"
             type="text"
             placeholder="SĐT"
             value={phoneNumber}
@@ -59,17 +62,20 @@ const EditUserModal = ({ user, onClose, onSuccess }) => {
             required
           />
           <input
+            name="birthDate"
             type="date"
             value={birthDate}
             onChange={(e) => setBirthDate(e.target.value)}
           />
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <select name="status" value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="Active">Active</option>
             <option value="Blocked">Blocked</option>
             <option value="Pending">Pending</option>
           </select>
-          <button type="submit" className="confirm-btn">Cập nhật</button>
-          <button type="button" onClick={onClose} className="cancel-btn">Huỷ</button>
+          <div className="btn-group">
+            <button type="submit" className="add-btn">Cập nhật</button>
+            <button type="button" className="cancel-btn" onClick={onClose}>Huỷ</button>
+          </div>
         </form>
       </div>
     </div>

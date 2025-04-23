@@ -1,14 +1,16 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import "../styles/Sidebar.css";
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(window.scrollY);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Theo dõi cuộn trang
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -20,7 +22,27 @@ const Sidebar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const user = JSON.parse(localStorage.getItem("customer"));
+      if (!user) return navigate("/");
+
+      try {
+        const res = await axios.get(`http://localhost:5000/api/admin/check-by-code/${user.customerCode}`);        ;
+        if (res.data.isAdmin) setIsAdmin(true);
+        else navigate("/");
+      } catch (error) {
+        console.error("Lỗi kiểm tra quyền admin:", error);
+        navigate("/");
+      }
+    };
+
+    checkAdmin();
+  }, [navigate]);
+
   const isActive = (path) => location.pathname === path;
+
+  if (!isAdmin) return null;
 
   return (
     <>

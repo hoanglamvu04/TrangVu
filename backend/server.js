@@ -23,6 +23,7 @@ const addressRoutes = require("./routes/addressRoutes");
 const orderPublicRoutes = require("./routes/orderPublicRoutes");
 const notificationRoutes = require("./routes/notifications");
 const passwordResetRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/product-details", productDetailRoutes);
@@ -37,6 +38,7 @@ app.use("/api/addresses", addressRoutes);
 app.use("/api/orders", orderPublicRoutes);
 app.use("/api/notifications", notificationRoutes); 
 app.use("/api/auth", passwordResetRoutes);  
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("Lâm Vũ Nè 🚀");
