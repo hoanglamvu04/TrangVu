@@ -6,6 +6,13 @@ const API_URL = "http://localhost:5000";
 
 const ProductDescription = ({ product }) => {
   const [descriptions, setDescriptions] = useState([]);
+  const [expanded, setExpanded] = useState({});
+
+  const labelMap = {
+    material: "Chất liệu",
+    form: "Form dáng",
+    design: "Thiết kế"
+  };
 
   useEffect(() => {
     const fetchDescriptions = async () => {
@@ -20,33 +27,45 @@ const ProductDescription = ({ product }) => {
     if (product?.code) fetchDescriptions();
   }, [product]);
 
-  if (!descriptions || descriptions.length === 0) {
-    return (
-      <div className="product-description">
-        <h2 className="desc-title">MÔ TẢ SẢN PHẨM</h2>
-        <p style={{ padding: "20px", textAlign: "center" }}>{product.name}</p>
-        <img src="/assets/no-description.png" alt="Mô tả sản phẩm" style={{ margin: "0 auto", maxHeight: 300 }} />
-      </div>
-    );
-  }
+  const toggleExpand = (typeKey) => {
+    setExpanded((prev) => ({ ...prev, [typeKey]: !prev[typeKey] }));
+  };
+
+  const getDescByType = (type) => descriptions.find((desc) => desc.type === type);
+
+  const renderOrder = ["material", "form", "design"];
 
   return (
     <div className="product-description">
       <h2 className="desc-title">MÔ TẢ SẢN PHẨM</h2>
       <div className="description-grid">
-        {descriptions.map((desc, idx) => (
-          <div className="description-card" key={idx}>
-            <h3 className="desc-section">{desc.title}</h3>
-            <p className="desc-content">{desc.content}</p>
-            {desc.image && (
-              <img
-                src={`${API_URL}${desc.image}`}
-                alt={desc.title}
-                className="desc-image"
-              />
-            )}
-          </div>
-        ))}
+        {renderOrder.map((typeKey, idx) => {
+          const desc = getDescByType(typeKey);
+          const isExpanded = expanded[typeKey];
+
+          return (
+            <div className="description-card" key={idx}>
+              <p className="desc-content">
+                <strong>{labelMap[typeKey]}:</strong> {desc?.title || "Không có dữ liệu"}
+              </p>
+              <div className={`desc-content-wrapper ${isExpanded ? "expanded" : ""}`}>
+                {desc?.content && <p>{desc.content}</p>}
+              </div>
+              {desc?.content?.length > 200 && (
+                <button className="toggle-btn" onClick={() => toggleExpand(typeKey)}>
+                  {isExpanded ? "Thu gọn" : "Xem thêm"}
+                </button>
+              )}
+              {desc?.image && (
+                <img
+                  src={`${API_URL}${desc.image}`}
+                  alt={desc.title}
+                  className="desc-image"
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

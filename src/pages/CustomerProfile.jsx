@@ -26,10 +26,13 @@ const CustomerProfile = () => {
       setSelectedTab("orders");
     } else if (location.pathname === "/review-feedback") {
       setSelectedTab("feedback");
-    } else if (location.pathname === "/CustomerProfile") {
+    } else if (location.pathname === "/address-management") {
+      setSelectedTab("addresses");
+    } else {
       setSelectedTab("profile");
     }
   }, [location]);
+  
 
   useEffect(() => {
     const storedCustomer = localStorage.getItem("customer");
@@ -101,8 +104,8 @@ const CustomerProfile = () => {
   
   const handleLogout = () => {
     localStorage.removeItem("customer");
-    navigate("/"); // hoặc navigate về trang chủ
-    window.location.reload(); // đảm bảo các component cập nhật
+    navigate("/");
+    window.location.reload();
   };
   
   
@@ -127,7 +130,7 @@ const CustomerProfile = () => {
           onClick={() => { setSelectedTab("orders"); navigate("/order-management"); }}>
           <FaShoppingBag /> Quản Lý Đơn Hàng <FaChevronRight />
         </div>
-        <div
+        {/* <div
           className={`sidebar-item ${selectedTab === "feedback" ? "active" : ""}`}
           onClick={() => {
             setSelectedTab("feedback");
@@ -135,7 +138,7 @@ const CustomerProfile = () => {
           }}
         >
           <FaRegStar /> Đánh giá và phản hồi <FaChevronRight />
-        </div>
+        </div> */}
 
         <div className="sidebar-item logout" onClick={handleLogout}>
           <FaSignOutAlt /> Đăng xuất <FaChevronRight />
@@ -184,19 +187,11 @@ const CustomerProfile = () => {
                 </div>
                 <div className="info-row">
                   <span>Email:</span>
-                  {editMode ? (
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                  ) : (
-                    <strong>{customer.email}</strong>
-                  )}
+                  <strong>{customer.email}</strong> 
                 </div>
                 <div className="info-row">
                   <span>Số điện thoại:</span>
-                  {editMode ? (
-                    <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                  ) : (
-                    <strong>{customer.phoneNumber}</strong>
-                  )}
+                  <strong>{customer.phoneNumber}</strong> 
                 </div>
                 <div className="info-row">
                   <span>Ngày sinh:</span>

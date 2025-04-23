@@ -17,7 +17,6 @@ router.get("/:productCode", async (req, res) => {
   }
 });
 
-// POST create new description
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { productCode, type, title, content } = req.body;
@@ -35,7 +34,6 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 });
 
-// PUT update description
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const { type, title, content } = req.body;
@@ -58,7 +56,6 @@ router.put("/:id", upload.single("image"), async (req, res) => {
   }
 });
 
-// DELETE description
 router.delete("/:id", async (req, res) => {
   try {
     const desc = await ProductDescription.findByIdAndDelete(req.params.id);

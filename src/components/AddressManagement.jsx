@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import AddressPicker from "../components/AddressPicker";
+import AddressModal from "../components/AddressModal";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import axios from "axios";
+import "../styles/address.css";
+import "../styles/AddressModal.css";
 
 const API_URL = "http://localhost:5000/api/addresses";
 
@@ -15,7 +18,9 @@ const AddressManagement = () => {
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
   const [editId, setEditId] = useState(null);
+  const [editAddressText, setEditAddressText] = useState("");
   const [resetTrigger, setResetTrigger] = useState(0);
+  const [showForm, setShowForm] = useState(false);
 
   const customer = JSON.parse(localStorage.getItem("customer"));
   const customerId = customer?._id;
@@ -51,6 +56,7 @@ const AddressManagement = () => {
       });
       fetchAddresses();
       resetForm();
+      setShowForm(false);
     } catch (err) {
       console.error("Lỗi khi thêm địa chỉ:", err);
     }
@@ -64,6 +70,8 @@ const AddressManagement = () => {
     setProvince(addr.province || "");
     setDistrict(addr.district || "");
     setWard(addr.ward || "");
+    setEditAddressText(`${addr.label || "(Không có ghi chú)"} - ${addr.fullAddress} - SĐT: ${addr.phoneNumber}`);
+    setShowForm(true);
   };
 
   const handleSaveEdit = async () => {
@@ -81,6 +89,7 @@ const AddressManagement = () => {
       });
       fetchAddresses();
       resetForm();
+      setShowForm(false);
     } catch (err) {
       console.error("Lỗi khi cập nhật địa chỉ:", err);
     }
@@ -106,6 +115,7 @@ const AddressManagement = () => {
     setDistrict("");
     setWard("");
     setPhoneError("");
+    setEditAddressText("");
     setResetTrigger((prev) => prev + 1);
   };
 
@@ -121,7 +131,13 @@ const AddressManagement = () => {
 
   return (
     <div className="address-management">
-      <h2>Quản Lý Địa Chỉ</h2>
+      <div className="address-header">
+        <h2>Quản Lý Địa Chỉ</h2>
+        <button className="add-btn" onClick={() => setShowForm(true)}>
+          <FaPlus /> Thêm Địa Chỉ Mới
+        </button>
+      </div>
+
       <div className="address-list">
         {addresses.map((addr) => (
           <div key={addr._id} className="address-card">
@@ -130,77 +146,38 @@ const AddressManagement = () => {
               <p>{addr.fullAddress}</p>
               <p>SĐT: {addr.phoneNumber || "Không có"}</p>
             </div>
-            <div className="anddress-actios">
-              <FaEdit
-                className="edit-icon"
-                style={{ marginRight: "10px", cursor: "pointer", fontSize: "18px" }}
-                onClick={() => handleEditAddress(addr)}
-              />
-              <FaTrash
-                className="delete-icon"
-                style={{ cursor: "pointer", fontSize: "18px" }}
-                onClick={() => handleDeleteAddress(addr._id)}
-              />
+            <div className="address-actions">
+              <FaEdit className="edit-icon" onClick={() => handleEditAddress(addr)} />
+              <FaTrash className="delete-icon" onClick={() => handleDeleteAddress(addr._id)} />
             </div>
           </div>
         ))}
       </div>
 
-      <h2>Thêm Địa Chỉ Mới</h2>
-      <div className="address-form">
-        <input
-          type="text"
-          placeholder="Ghi chú (Nhà riêng, Văn phòng...)"
-          value={newLabel}
-          onChange={(e) => setNewLabel(e.target.value)}
+      {showForm && (
+        <AddressModal
+          isEdit={!!editId}
+          onClose={() => { resetForm(); setShowForm(false); }}
+          onSave={handleSaveEdit}
+          onAdd={handleAddAddress}
+          isFormValid={isFormValid}
+          newLabel={newLabel}
+          newDetail={newDetail}
+          phoneNumber={phoneNumber}
+          phoneError={phoneError}
+          setNewLabel={setNewLabel}
+          setNewDetail={setNewDetail}
+          setPhoneNumber={setPhoneNumber}
+          resetTrigger={resetTrigger}
+          province={province}
+          district={district}
+          ward={ward}
+          setProvince={setProvince}
+          setDistrict={setDistrict}
+          setWard={setWard}
+          editAddressText={editAddressText}
         />
-
-        <div className="address-picker-row">
-          <AddressPicker
-            resetTrigger={resetTrigger}
-            onChange={({ ward, district, province }) => {
-              setWard(ward);
-              setDistrict(district);
-              setProvince(province);
-            }}
-          />
-        </div>
-
-        <input
-          type="text"
-          placeholder="Nhập địa chỉ cụ thể (số nhà, ngõ...)"
-          value={newDetail}
-          onChange={(e) => setNewDetail(e.target.value)}
-        />
-
-        <input
-          type="text"
-          placeholder="Số điện thoại liên hệ"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-        />
-        {phoneError && <p style={{ color: "red", fontSize: "14px" }}>{phoneError}</p>}
-
-        {editId ? (
-          <button
-            className="save-btn"
-            onClick={handleSaveEdit}
-            disabled={!isFormValid}
-            style={{ opacity: !isFormValid ? 0.5 : 1, cursor: !isFormValid ? "not-allowed" : "pointer" }}
-          >
-            Lưu thay đổi
-          </button>
-        ) : (
-          <button
-            className="add-btn"
-            onClick={handleAddAddress}
-            disabled={!isFormValid}
-            style={{ opacity: !isFormValid ? 0.5 : 1, cursor: !isFormValid ? "not-allowed" : "pointer" }}
-          >
-            <FaPlus /> Thêm Địa Chỉ
-          </button>
-        )}
-      </div>
+      )}
     </div>
   );
 };

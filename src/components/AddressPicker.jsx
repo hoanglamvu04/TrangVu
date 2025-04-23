@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-const AddressPicker = ({ onChange, resetTrigger }) => {
+const AddressPicker = ({
+  onChange,
+  resetTrigger,
+  initialProvince = "",
+  initialDistrict = "",
+  initialWard = ""
+}) => {
   const [data, setData] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState(initialProvince);
+  const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);
+  const [selectedWard, setSelectedWard] = useState(initialWard);
 
   useEffect(() => {
     fetch("/vietnam_location.json")
@@ -12,12 +18,12 @@ const AddressPicker = ({ onChange, resetTrigger }) => {
       .then((res) => setData(res));
   }, []);
 
-  // 👇 Reset tỉnh, huyện, xã mỗi khi resetTrigger thay đổi
+  // Reset hoặc cập nhật lại khi resetTrigger hoặc initial values thay đổi
   useEffect(() => {
-    setSelectedProvince("");
-    setSelectedDistrict("");
-    setSelectedWard("");
-  }, [resetTrigger]);
+    setSelectedProvince(initialProvince);
+    setSelectedDistrict(initialDistrict);
+    setSelectedWard(initialWard);
+  }, [resetTrigger, initialProvince, initialDistrict, initialWard]);
 
   const handleProvinceChange = (e) => {
     const value = e.target.value;

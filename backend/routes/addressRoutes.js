@@ -64,7 +64,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Xoá địa chỉ
 router.delete("/:id", async (req, res) => {
   try {
     await Address.findByIdAndDelete(req.params.id);

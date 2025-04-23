@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
-import { useCart } from "../contexts/CartContext";
+import { useCart } from "../contexts/CartContext"; 
 import "../styles/CartModal.css";
 import colorMap from "../utils/colorMap";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = "http://localhost:5000";
 
 const CartModal = ({ onClose }) => {
   const {
@@ -10,11 +13,31 @@ const CartModal = ({ onClose }) => {
     updateQuantity,
     removeFromCart,
     clearCart,
+    setCartItems,
   } = useCart();
 
-  const customer = JSON.parse(localStorage.getItem("customer"));
-  const customerId = customer?._id;
   const navigate = useNavigate();
+
+  const fetchStockForItems = async () => {
+    try {
+      const updatedItems = await Promise.all(
+        cartItems.map(async (item) => {
+          const res = await axios.get(`${API_URL}/api/product-details/${item.productCode}`);
+          const detail = res.data.find(
+            (d) => d.colorCode === item.selectedColor && d.size === item.selectedSize
+          );
+          return { ...item, stock: detail?.quantity || 0 };
+        })
+      );
+      setCartItems(updatedItems);
+    } catch (err) {
+      console.error("Lỗi lấy tồn kho:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (cartItems.length > 0) fetchStockForItems();
+  }, [cartItems.length]);
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -22,8 +45,9 @@ const CartModal = ({ onClose }) => {
   );
 
   const handleCheckout = () => {
-    onClose(); // đóng modal trước
-    navigate("/checkout"); // chuyển trang
+    if (cartItems.length === 0) return;
+    onClose();
+    navigate("/checkout");
   };
 
   return (
@@ -49,11 +73,11 @@ const CartModal = ({ onClose }) => {
                 </tr>
               </thead>
               <tbody>
-                {cartItems.map((item, idx) => (
-                  <tr key={idx}>
+                {cartItems.map((item) => (
+                  <tr key={`${item.productCode}-${item.selectedColor}-${item.selectedSize}`}>
                     <td>
                       <img
-                        src={item.image || ""}
+                        src={item.image || "/assets/images/placeholder.png"}
                         alt={item.name}
                         className="cart-item-image"
                       />
@@ -79,14 +103,18 @@ const CartModal = ({ onClose }) => {
                         <span>{item.quantity}</span>
                         <button
                           className="qty-btn"
-                          onClick={() =>
+                          onClick={() => {
+                            if (!item.stock || item.quantity >= item.stock) {
+                              alert("Số lượng vượt quá tồn kho");
+                              return;
+                            }
                             updateQuantity(
                               item.productCode,
                               item.selectedColor,
                               item.selectedSize,
                               item.quantity + 1
-                            )
-                          }
+                            );
+                          }}
                         >
                           +
                         </button>
