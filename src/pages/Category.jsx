@@ -36,7 +36,7 @@ const Category = () => {
       <div className="category-container">
         <FilterSidebar />
         <div className="product-section">
-          <h2 className="category-title">DANH SÁCH SẢN PHẨM</h2>
+          <h2 className="category-title">DANH SÁCH SẢN PHẨM</h2> 
           {loading ? (
             <p>Đang tải...</p>
           ) : error ? (

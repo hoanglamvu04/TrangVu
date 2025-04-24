@@ -17,6 +17,7 @@ const UserManager = () => {
   const [lastScrollTop, setLastScrollTop] = useState(0);
 
   const [promotingId, setPromotingId] = useState(null);
+  const [lockingId, setLockingId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 30;
@@ -100,6 +101,23 @@ const UserManager = () => {
     }
   };
 
+  const toggleLockUser = async (user) => {
+    if (!window.confirm(`Bạn có chắc muốn ${user.status === "Blocked" ? "mở khoá" : "khoá"} tài khoản này?`)) return;
+    setLockingId(user._id);
+    try {
+      await axios.put(`${API_URL}/api/admin/users/${user._id}`, {
+        ...user,
+        status: user.status === "Blocked" ? "Active" : "Blocked",
+      });
+      fetchUsers();
+    } catch (err) {
+      alert("Không thể cập nhật trạng thái người dùng");
+      console.error(err);
+    } finally {
+      setLockingId(null);
+    }
+  };
+
   const filteredUsers = users.filter(
     (user) =>
       user.fullName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -179,6 +197,17 @@ const UserManager = () => {
                     : isUserAdmin(user.customerCode)
                     ? "Gỡ quyền Admin"
                     : "Phân quyền Admin"}
+                </button>{" "}
+                <button
+                  className="admin-btn btn-lock"
+                  onClick={() => toggleLockUser(user)}
+                  disabled={lockingId === user._id}
+                >
+                  {lockingId === user._id
+                    ? "Đang cập nhật..."
+                    : user.status === "Blocked"
+                    ? "Mở khoá"
+                    : "Khoá"}
                 </button>
               </td>
             </tr>

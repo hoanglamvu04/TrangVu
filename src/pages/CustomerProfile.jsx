@@ -6,10 +6,9 @@ import AddressManagement from "../components/AddressManagement";
 import ReviewFeedback from "../components/ReviewFeedback";
 import axios from "axios";
 
-
 import {
   FaUser, FaShoppingBag, FaWallet, FaMapMarkerAlt,
-  FaRegStar, FaSignOutAlt, FaChevronRight
+  FaRegStar, FaSignOutAlt, FaChevronRight, FaLock
 } from "react-icons/fa";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -20,6 +19,7 @@ const CustomerProfile = () => {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState("profile");
   const [customer, setCustomer] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (location.pathname === "/order-management") {
@@ -32,12 +32,17 @@ const CustomerProfile = () => {
       setSelectedTab("profile");
     }
   }, [location]);
-  
 
   useEffect(() => {
     const storedCustomer = localStorage.getItem("customer");
     if (storedCustomer) {
-      setCustomer(JSON.parse(storedCustomer));
+      const parsed = JSON.parse(storedCustomer);
+      setCustomer(parsed);
+
+      axios
+        .get(`http://localhost:5000/api/admin/check-by-code/${parsed.customerCode}`)
+        .then(res => setIsAdmin(res.data.isAdmin))
+        .catch(err => console.log("Lỗi kiểm tra quyền admin:", err));
     }
   }, []);
 
@@ -64,24 +69,24 @@ const CustomerProfile = () => {
   const handleSave = async () => {
     try {
       let avatarPath = customer.avatar;
-  
+
       if (avatarFile) {
         const formData = new FormData();
         formData.append("avatar", avatarFile);
-  
+
         const res = await axios.post("http://localhost:5000/api/auth/upload-avatar", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         avatarPath = res.data.filePath;
       }
-  
+
       const updateRes = await axios.put(`http://localhost:5000/api/auth/update/${customer._id}`, {
         fullName,
         phoneNumber: phone,
         birthDate,
         avatar: avatarPath,
       });
-  
+
       alert("Cập nhật thông tin thành công!");
       setCustomer(updateRes.data.user);
       localStorage.setItem("customer", JSON.stringify(updateRes.data.user));
@@ -90,7 +95,7 @@ const CustomerProfile = () => {
       alert("Lỗi khi cập nhật: " + (err.response?.data?.message || err.message));
     }
   };
-  
+
   const handleChangePassword = () => {
     if (newPwd.length < 6) return alert("Mật khẩu mới phải có ít nhất 6 ký tự");
     if (oldPwd === newPwd) return alert("Mật khẩu mới phải khác mật khẩu cũ");
@@ -101,14 +106,13 @@ const CustomerProfile = () => {
   };
 
   if (!customer) return <div className="customer-profile">Đang tải dữ liệu...</div>;
-  
+
   const handleLogout = () => {
     localStorage.removeItem("customer");
     navigate("/");
     window.location.reload();
   };
-  
-  
+
   return (
     <div className="customer-profile">
       <aside className="sidebar">
@@ -130,21 +134,16 @@ const CustomerProfile = () => {
           onClick={() => { setSelectedTab("orders"); navigate("/order-management"); }}>
           <FaShoppingBag /> Quản Lý Đơn Hàng <FaChevronRight />
         </div>
-        {/* <div
-          className={`sidebar-item ${selectedTab === "feedback" ? "active" : ""}`}
-          onClick={() => {
-            setSelectedTab("feedback");
-            navigate("/review-feedback");
-          }}
-        >
-          <FaRegStar /> Đánh giá và phản hồi <FaChevronRight />
-        </div> */}
+
+        {isAdmin && (
+          <div className="sidebar-item" onClick={() => navigate("/admin")}>  
+            <FaLock /> Trang quản trị <FaChevronRight />
+          </div>
+        )}
 
         <div className="sidebar-item logout" onClick={handleLogout}>
           <FaSignOutAlt /> Đăng xuất <FaChevronRight />
         </div>
-
-
       </aside>
 
       <main className="profile-content">
