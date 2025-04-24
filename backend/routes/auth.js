@@ -90,6 +90,37 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.post("/change-password", async (req, res) => {
+  const { userId, oldPassword, newPassword } = req.body;
+
+  if (!userId || !oldPassword || !newPassword) {
+    return res.status(400).json({ success: false, message: "Thiếu thông tin bắt buộc" });
+  }
+
+  try {
+    const user = await Customer.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Người dùng không tồn tại" });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Mật khẩu hiện tại không đúng" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashed = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashed;
+    await user.save();
+
+    return res.json({ success: true, message: "Đổi mật khẩu thành công" });
+  } catch (err) {
+    console.error("Lỗi đổi mật khẩu:", err);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+});
+
 
 // ===================== UPLOAD AVATAR =====================
 router.post("/upload-avatar", upload.single("avatar"), (req, res) => {

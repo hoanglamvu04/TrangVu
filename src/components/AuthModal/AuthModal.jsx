@@ -69,12 +69,21 @@ const AuthModal = ({ onClose }) => {
     try {
       if (isLogin) {
         const res = await axios.post("http://localhost:5000/api/auth/login", {
-          email: formData.email, password: formData.password,
+          email: formData.email,
+          password: formData.password,
         });
+      
+        if (res.data.user.status === "Blocked") {
+          setError("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
+          setLoading(false);
+          return;
+        }
+      
         alert("Đăng nhập thành công!");
         localStorage.setItem("customer", JSON.stringify(res.data.user));
         onClose();
-      } else {
+      }
+       else {
         await axios.post("http://localhost:5000/api/auth/register", {
           fullName: formData.name,
           email: formData.email,

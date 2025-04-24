@@ -96,13 +96,29 @@ const CustomerProfile = () => {
     }
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
+    if (!oldPwd || !newPwd || !confirmPwd) return alert("Vui lòng điền đầy đủ thông tin mật khẩu");
     if (newPwd.length < 6) return alert("Mật khẩu mới phải có ít nhất 6 ký tự");
     if (oldPwd === newPwd) return alert("Mật khẩu mới phải khác mật khẩu cũ");
     if (newPwd !== confirmPwd) return alert("Xác nhận mật khẩu không khớp");
-    alert("Đổi mật khẩu thành công!");
-    setOldPwd(""); setNewPwd(""); setConfirmPwd("");
-    setChangePwdMode(false);
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/change-password", {
+        userId: customer._id,
+        oldPassword: oldPwd,
+        newPassword: newPwd
+      });
+
+      if (res.data.success) {
+        alert("Đổi mật khẩu thành công!");
+        setOldPwd(""); setNewPwd(""); setConfirmPwd("");
+        setChangePwdMode(false);
+      } else {
+        alert(res.data.message || "Đổi mật khẩu thất bại");
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || "Đổi mật khẩu thất bại");
+    }
   };
 
   if (!customer) return <div className="customer-profile">Đang tải dữ liệu...</div>;

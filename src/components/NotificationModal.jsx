@@ -24,28 +24,10 @@ const NotificationModal = ({ onClose }) => {
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      setNotifications(notifications.filter((n) => n._id !== id));
-    } catch (err) {
-      console.error("❌ Lỗi xoá thông báo:", err);
-    }
-  };
-
-  const handleDeleteAll = async () => {
-    try {
-      await axios.delete(`${API_URL}/all/${customer._id}`);
-      setNotifications([]);
-    } catch (err) {
-      console.error("❌ Lỗi xoá tất cả thông báo:", err);
-    }
-  };
-
   const getNotificationStyle = (type) => {
     switch (type) {
       case "placed":
-        return { icon: "🛒", color: "#007bff" };
+        return { icon: "🍒", color: "#007bff" };
       case "confirmed":
         return { icon: "✅", color: "#28a745" };
       case "shipping":
@@ -73,36 +55,26 @@ const NotificationModal = ({ onClose }) => {
           ) : notifications.length === 0 ? (
             <p>Không có thông báo nào.</p>
           ) : (
-            <>
-              <ul className="notification-list">
-                {notifications.map((noti) => {
-                  const { icon, color } = getNotificationStyle(noti.type);
-                  return (
-                    <li key={noti._id} className="notification-item">
+            <ul className="notification-list">
+              {notifications.map((noti) => {
+                const { icon, color } = getNotificationStyle(noti.type);
+                return (
+                  <li key={noti._id} className="notification-item">
                     <div style={{ color }}>
                       <strong>
-                        {icon} Đơn hàng{" "}
-                        <span style={{ textDecoration: "underline" }}>
+                        {icon} Đơn hàng <span style={{ textDecoration: "underline" }}>
                           {noti.orderCode || "Không rõ mã"}
                         </span>
                       </strong>
                       : {noti.message}
                     </div>
                     <div className="notification-time">
-                      🕓 {new Date(noti.createdAt).toLocaleString("vi-VN")}
+                      🦓 {new Date(noti.createdAt).toLocaleString("vi-VN")}
                     </div>
-                    <button className="notification-delete" onClick={() => handleDelete(noti._id)}>
-                      Xoá thông báo
-                    </button>
                   </li>
-                  
-                  );
-                })}
-              </ul>
-              <button className="notification-delete-all" onClick={handleDeleteAll}>
-                Xoá tất cả
-              </button>
-            </>
+                );
+              })}
+            </ul>
           )}
         </div>
       </div>
