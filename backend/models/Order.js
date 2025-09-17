@@ -1,42 +1,38 @@
+// models/Order.js
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-  orderCode: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  customer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Customer",
-    required: true,
-  },
+  orderCode: { type: String, required: true, unique: true },
+  customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true },
+
   items: [
     {
+      productCode: String,
+      productDetailCode: String,
       productName: String,
       quantity: Number,
       price: Number,
-      color: String,
-      size: String,
+      selectedColor: String,
+      selectedSize: String,
     },
   ],
-  totalAmount: {
-    type: Number,
-    required: true,
-  },
+
+  totalAmount: { type: Number, required: true },
+
+  // ➜ BỔ SUNG recipientName (tên người nhận)
   address: {
-    fullAddress: { type: String, required: true },
-    phoneNumber: { type: String, required: true },
-  },  
+    recipientName: { type: String, required: true },   // <—
+    fullAddress:   { type: String, required: true },
+    phoneNumber:   { type: String, required: true },
+  },
+
   status: {
     type: String,
     enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
     default: "Pending",
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+
+  createdAt: { type: Date, default: Date.now },
 });
 
 // Tạo mã đơn hàng tự động

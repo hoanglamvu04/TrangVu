@@ -17,7 +17,6 @@ const Sidebar = () => {
       setIsVisible(currentScrollY < lastScrollY || currentScrollY < 100);
       setLastScrollY(currentScrollY);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
@@ -26,17 +25,14 @@ const Sidebar = () => {
     const checkAdmin = async () => {
       const user = JSON.parse(localStorage.getItem("customer"));
       if (!user) return navigate("/");
-
       try {
-        const res = await axios.get(`http://localhost:5000/api/admin/check-by-code/${user.customerCode}`);        ;
+        const res = await axios.get(`http://localhost:5000/api/admin/check-by-code/${user.customerCode}`);
         if (res.data.isAdmin) setIsAdmin(true);
         else navigate("/");
-      } catch (error) {
-        console.error("Lỗi kiểm tra quyền admin:", error);
+      } catch {
         navigate("/");
       }
     };
-
     checkAdmin();
   }, [navigate]);
 
@@ -49,9 +45,7 @@ const Sidebar = () => {
       <div className={`admin-sidebar ${!isVisible ? "hide" : "sidebar-visible"} ${isCollapsed ? "collapsed" : ""}`}>
         <div className="admin-sidebar-header">
           <h2 className="admin-sidebar-title">Trang quản trị</h2>
-          <button className="toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-            ☰
-          </button>
+          <button className="toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>☰</button>
         </div>
         {!isCollapsed && (
           <div className="admin-sidebar-nav-wrapper">
@@ -61,6 +55,8 @@ const Sidebar = () => {
               <Link to="/admin/products" className={isActive("/admin/products") ? "active" : ""}>Quản lý sản phẩm</Link>
               <Link to="/admin/order-manager" className={isActive("/admin/order-manager") ? "active" : ""}>Quản lý đơn hàng</Link>
               <Link to="/admin/users" className={isActive("/admin/users") ? "active" : ""}>Quản lý người dùng</Link>
+              <Link to="/admin/reviews" className={isActive("/admin/reviews") ? "active" : ""}>Quản lý đánh giá</Link>
+              <Link to="/admin/collections" className={isActive("/admin/collections") ? "active" : ""}>Bộ sưu tập</Link>
             </nav>
           </div>
         )}

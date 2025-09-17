@@ -1,53 +1,121 @@
 const colorMap = {
-    "#ff4d4d": "Đỏ cam",
-    "#cc0000": "Đỏ đậm",
-    "#ff6666": "Đỏ nhạt",
-    "#e60026": "Đỏ thắm",
-    "#d11a2a": "Đỏ tươi",
-    "#b22222": "Đỏ rượu",
-    "#800000": "Đỏ mận",
-  
-    "#0066cc": "Xanh dương",
-    "#33cc33": "Xanh lá",
-    "#009999": "Xanh ngọc",
-    "#00ffcc": "Xanh mint",
-    "#2e8b57": "Xanh rêu",
-    "#3cb371": "Xanh biển",
-    "#1e90ff": "Xanh da trời",
-    "#000080": "Xanh navy",
-  
-    "#ffcc00": "Vàng nghệ",
-    "#ffff66": "Vàng chanh",
-    "#f5e050": "Vàng tươi",
-    "#f9d71c": "Vàng hoàng yến",
-    "#ffb300": "Vàng đậm",
-  
-    "#ff99cc": "Hồng nhạt",
-    "#ff69b4": "Hồng sen",
-    "#ff1493": "Hồng đậm",
-    "#cc66cc": "Tím đậm",
-    "#800080": "Tím Huế",
-    "#9370db": "Tím oải hương",
-    "#ba55d3": "Tím phong lan",
-  
-    "#8b4513": "Nâu đất",
-    "#a0522d": "Nâu đỏ",
-    "#bc8f8f": "Nâu hồng",
-    "#deb887": "Nâu nhạt",
-    "#d2b48c": "Màu be",
-  
-    "#000000": "Đen",
-    "#1c1c1c": "Đen khói",
-    "#2f4f4f": "Xám đậm",
-    "#4b4b4b": "Xám tiêu",
-    "#C1C2C2": "Xám nhạt",
-  
-    "#ffffff": "Trắng",
-    "#f0f0f0": "Trắng ngà",
-    "#fafafa": "Trắng sữa",
-    "#f5f5f5": "Trắng khói",
-    "#fefee2": "Màu sữa"
-  };
-  
-  export default colorMap;
-  
+  // ===== TRUNG TÍNH =====
+  "#000000": "Đen",
+  "#1c1c1c": "Đen khói",
+  "#2f4f4f": "Xám đậm",
+  "#4b4b4b": "Xám tiêu",
+  "#36454f": "Xám than (Charcoal)",
+  "#708090": "Xám slate",
+  "#808080": "Xám",
+  "#BEBEBE": "Xám heather",
+  "#C1C2C2": "Xám nhạt",
+  "#D3D3D3": "Xám bạc nhạt",
+  "#B2BEB5": "Xám tro (Ash)",
+  "#ffffff": "Trắng",
+  "#F8F8F8": "Trắng sáng",
+  "#f0f0f0": "Trắng ngà",
+  "#FFFFF0": "Ivory",
+  "#E3DAC9": "Bone",
+  "#fafafa": "Trắng sữa",
+  "#f5f5f5": "Trắng khói",
+  "#fefee2": "Màu sữa",
+
+  // ===== BE / KHAKI / NÂU SÁNG =====
+  "#F5F5DC": "Be",
+  "#FFFDD0": "Kem (Cream)",
+  "#C2B280": "Cát (Sand)",
+  "#C19A6B": "Lạc đà (Camel)",
+  "#D2B48C": "Khaki nhạt",
+  "#BDB76B": "Khaki đậm",
+  "#DEB887": "Nâu nhạt (Burly)",
+  "#BC8F8F": "Nâu hồng",
+  "#A0522D": "Nâu đỏ",
+  "#8B4513": "Nâu đất",
+  "#6F4E37": "Cà phê",
+  "#5D4037": "Sô-cô-la",
+  "#4B3621": "Espresso",
+
+  // ===== ĐỎ / HỒNG / ĐỎ RƯỢU =====
+  "#FF0000": "Đỏ tươi",
+  "#FF2400": "Đỏ scarlet",
+  "#DC143C": "Đỏ tím (Crimson)",
+  "#E60026": "Đỏ thắm",
+  "#D11A2A": "Đỏ tươi đậm",
+  "#B22222": "Đỏ rượu",
+  "#800020": "Đỏ burgundy",
+  "#800000": "Đỏ mận",
+  "#FF4D4D": "Đỏ cam",
+  "#FF6666": "Đỏ nhạt",
+
+  "#FFC0CB": "Hồng phấn",
+  "#FF99CC": "Hồng nhạt",
+  "#FF69B4": "Hồng sen",
+  "#FF1493": "Hồng đậm",
+  "#FF7F50": "San hô (Coral)",
+  "#FA8072": "Hồng cá hồi (Salmon)",
+  "#FAD2C9": "Hồng đào (Peach linen)",
+  "#FFDAB9": "Peach Puff",
+
+  // ===== CAM / GẠCH / ĐẤT NUNG =====
+  "#FFA500": "Cam",
+  "#CC5500": "Cam cháy (Burnt)",
+  "#E2725B": "Đất nung (Terracotta)",
+  "#B7410E": "Gỉ sét (Rust)",
+  "#F4A58A": "Cam nhạt linen (giống ảnh)",
+
+  // ===== VÀNG / HỔ PHÁCH =====
+  "#FFD700": "Vàng kim (Gold)",
+  "#FFBF00": "Hổ phách (Amber)",
+  "#F9D71C": "Vàng hoàng yến",
+  "#FFDB58": "Vàng mù tạt (Mustard)",
+  "#FFF44F": "Vàng chanh sáng",
+  "#F5E050": "Vàng tươi",
+  "#FFB300": "Vàng đậm",
+
+  // ===== XANH DƯƠNG / NAVY / TEAL =====
+  "#000080": "Xanh navy",
+  "#191970": "Xanh midnight",
+  "#0047AB": "Xanh cobalt",
+  "#4169E1": "Xanh hoàng gia (Royal)",
+  "#1560BD": "Xanh denim",
+  "#1E90FF": "Xanh da trời",
+  "#87CEEB": "Xanh trời nhạt",
+  "#BFEFFF": "Xanh baby",
+  "#4682B4": "Xanh thép (Steel)",
+  "#0066CC": "Xanh dương",
+  "#0099CC": "Xanh cyan đậm",
+  "#008080": "Xanh teal",
+  "#40E0D0": "Ngọc lam (Turquoise)",
+  "#7FFFD4": "Aquamarine",
+  "#009999": "Xanh ngọc",
+
+  // ===== XANH LÁ (đủ dải áo quần) =====
+  "#33CC33": "Xanh lá",
+  "#32CD32": "Xanh lime",
+  "#2E8B57": "Xanh rêu",
+  "#3CB371": "Xanh biển-lá (SeaGreen)",
+  "#228B22": "Xanh rừng",
+  "#556B2F": "Xanh olive đậm (Army)",
+  "#808000": "Olive",
+  "#8A9A5B": "Rêu khô (Moss)",
+  "#9CAF88": "Xanh sage",
+  "#B8D3A2": "Xanh lá nhạt linen (giống ảnh)",
+  "#98FF98": "Xanh mint nhạt",
+  "#AAF0D1": "Xanh mint pastel",
+  "#00FFCC": "Xanh mint tươi",
+
+  // ===== TÍM =====
+  "#800080": "Tím Huế",
+  "#8E4585": "Mận tím (Plum)",
+  "#8A2BE2": "Tím violet",
+  "#9370DB": "Tím oải hương đậm",
+  "#E6E6FA": "Lavender",
+  "#C8A2C8": "Tím lilac",
+
+  // ===== XANH XÁM / XANH RÊU XÁM (thường gặp ở áo khoác) =====
+  "#6B8E23": "Olive green",
+  "#708D81": "Xanh xám rêu",
+  "#5F9EA0": "Xanh xám biển (Cadet)"
+};
+
+export default colorMap;

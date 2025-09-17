@@ -19,8 +19,16 @@ const ProductManager = () => {
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 
   const [form, setForm] = useState({
-    code: "", name: "", originalPrice: "", discount: 0, finalPrice: "",
-    category: "", status: "Active", image: null, imagePath: "",
+    code: "",
+    name: "",
+    originalPrice: "",
+    discount: 0,
+    finalPrice: "",
+    category: "",
+    status: "Active",
+    image: null,
+    imagePath: "",
+    tags: ""
   });
   const [editingId, setEditingId] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -37,7 +45,12 @@ const ProductManager = () => {
   const [showDetailForm, setShowDetailForm] = useState(false);
   const [editingDetailId, setEditingDetailId] = useState(null);
   const [newDetail, setNewDetail] = useState({
-    detailCode: "", colorCode: "", colorName: "", size: "", quantity: "", image: null,
+    detailCode: "",
+    colorCode: "",
+    colorName: "",
+    size: "",
+    quantity: "",
+    image: null
   });
 
   const [showStickyHeader, setShowStickyHeader] = useState(true);
@@ -90,10 +103,7 @@ const ProductManager = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    const updatedForm = {
-      ...form,
-      [name]: name === "image" ? files[0] : value,
-    };
+    const updatedForm = { ...form, [name]: name === "image" ? files[0] : value };
     if (name === "originalPrice" || name === "discount") {
       const price = parseFloat(updatedForm.originalPrice || 0);
       const percent = parseFloat(updatedForm.discount || 0);
@@ -105,8 +115,11 @@ const ProductManager = () => {
   const handleSubmit = async () => {
     const formData = new FormData();
     for (const key in form) {
-      if (key === "image" && form.image) formData.append("image", form.image);
-      else if (key !== "image") formData.append(key, form[key]);
+      if (key === "image") {
+        if (form.image) formData.append("image", form.image);
+      } else {
+        formData.append(key, form[key] ?? "");
+      }
     }
 
     if (editingId) {
@@ -117,7 +130,18 @@ const ProductManager = () => {
       alert("Thêm sản phẩm thành công");
     }
 
-    setForm({ code: "", name: "", originalPrice: "", discount: 0, finalPrice: "", category: "", status: "Active", image: null, imagePath: "" });
+    setForm({
+      code: "",
+      name: "",
+      originalPrice: "",
+      discount: 0,
+      finalPrice: "",
+      category: "",
+      status: "Active",
+      image: null,
+      imagePath: "",
+      tags: ""
+    });
     setEditingId(null);
     setShowProductForm(false);
     fetchProducts();
@@ -125,10 +149,16 @@ const ProductManager = () => {
 
   const handleEdit = (product) => {
     setForm({
-      code: product.code, name: product.name, originalPrice: product.originalPrice,
-      discount: product.discount, finalPrice: product.finalPrice,
+      code: product.code,
+      name: product.name,
+      originalPrice: product.originalPrice,
+      discount: product.discount,
+      finalPrice: product.finalPrice,
       category: product.category?._id || product.category,
-      status: product.status, image: null, imagePath: product.image || "",
+      status: product.status,
+      image: null,
+      imagePath: product.image || "",
+      tags: Array.isArray(product.tags) ? product.tags.join(",") : ""
     });
     setEditingId(product._id);
     setShowProductForm(true);
@@ -158,11 +188,13 @@ const ProductManager = () => {
     setNewDetail({ detailCode: "", colorCode: "", colorName: "", size: "", quantity: "", image: null });
   };
 
-  const filteredProducts = products.filter(
-    (p) =>
-      p.name?.toLowerCase().includes(search.toLowerCase()) ||
-      p.code?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = products.filter((p) => {
+    const s = search.toLowerCase();
+    const inName = (p.name || "").toLowerCase().includes(s);
+    const inCode = (p.code || "").toLowerCase().includes(s);
+    const inTags = Array.isArray(p.tags) && p.tags.some((t) => (t || "").toLowerCase().includes(s));
+    return inName || inCode || inTags;
+  });
 
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -170,11 +202,9 @@ const ProductManager = () => {
   );
 
   const groupedDescriptions = { form: [], material: [], design: [] };
-    productDescriptions.forEach((desc) => {
-      if (groupedDescriptions[desc.type]) {
-        groupedDescriptions[desc.type].push(desc);
-      }
-    });
+  productDescriptions.forEach((desc) => {
+    if (groupedDescriptions[desc.type]) groupedDescriptions[desc.type].push(desc);
+  });
 
   return (
     <div className="admin-page">
@@ -183,7 +213,7 @@ const ProductManager = () => {
         <div className="admin-header-controls">
           <input
             type="text"
-            placeholder="Tìm theo mã hoặc tên sản phẩm..."
+            placeholder="Tìm theo mã, tên hoặc tag..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -205,6 +235,7 @@ const ProductManager = () => {
             <th>Giá mới</th>
             <th>Danh mục</th>
             <th>Trạng thái</th>
+            <th>Tags</th>
             <th>Hình ảnh</th>
             <th>Hành động</th>
           </tr>
@@ -219,6 +250,7 @@ const ProductManager = () => {
               <td>{p.finalPrice}</td>
               <td>{p.category?.name || "Chưa có"}</td>
               <td>{p.status === "Active" ? "Đang bán" : "Ngưng bán"}</td>
+              <td>{Array.isArray(p.tags) && p.tags.length ? p.tags.join(", ") : "-"}</td>
               <td>{p.image && <img src={`${API_URL}${p.image}`} alt={p.name} width="60" />}</td>
               <td>
                 <button className="btn-edit" onClick={() => handleEdit(p)}>Sửa</button>
@@ -231,7 +263,6 @@ const ProductManager = () => {
         </tbody>
       </table>
 
-      {/* PHÂN TRANG */}
       <div className="pagination">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button
@@ -244,7 +275,6 @@ const ProductManager = () => {
         ))}
       </div>
 
-      {/* MODALS giữ nguyên */}
       {showProductForm && (
         <ProductFormModal
           form={form}
@@ -255,87 +285,88 @@ const ProductManager = () => {
           onClose={() => setShowProductForm(false)}
         />
       )}
+
       {showDescriptionModal && selectedProduct && (
-  <DescriptionModal
-    product={selectedProduct}
-    descriptions={productDescriptions}
-    groupedDescriptions={groupedDescriptions}
-    onClose={() => setShowDescriptionModal(false)}
-    showForm={showDescForm}
-    setShowForm={setShowDescForm}
-    newDesc={newDesc}
-    setNewDesc={setNewDesc}
-    onChange={(e) =>
-      setNewDesc({
-        ...newDesc,
-        [e.target.name]: e.target.name === "image" ? e.target.files[0] : e.target.value,
-      })
-    }
-    onSubmit={async () => {
-      const formData = new FormData();
-      formData.append("productCode", selectedProduct.code);
-      formData.append("type", newDesc.type);
-      formData.append("title", newDesc.title);
-      formData.append("content", newDesc.content);
-      if (newDesc.image) formData.append("image", newDesc.image);
+        <DescriptionModal
+          product={selectedProduct}
+          descriptions={productDescriptions}
+          groupedDescriptions={groupedDescriptions}
+          onClose={() => setShowDescriptionModal(false)}
+          showForm={showDescForm}
+          setShowForm={setShowDescForm}
+          newDesc={newDesc}
+          setNewDesc={setNewDesc}
+          onChange={(e) =>
+            setNewDesc({
+              ...newDesc,
+              [e.target.name]: e.target.name === "image" ? e.target.files[0] : e.target.value
+            })
+          }
+          onSubmit={async () => {
+            const formData = new FormData();
+            formData.append("productCode", selectedProduct.code);
+            formData.append("type", newDesc.type);
+            formData.append("title", newDesc.title);
+            formData.append("content", newDesc.content);
+            if (newDesc.image) formData.append("image", newDesc.image);
 
-      if (editingDescId) {
-        await axios.put(`${API_URL}/api/product-descriptions/${editingDescId}`, formData);
-      } else {
-        await axios.post(`${API_URL}/api/product-descriptions`, formData);
-      }
-      await fetchDescriptions(selectedProduct.code);
-      setShowDescForm(false);
-      setEditingDescId(null);
-      setNewDesc({ type: "form", title: "", content: "", image: null });
-    }}
-    editingId={editingDescId}
-    onEdit={(desc) => {
-      setNewDesc({
-        type: desc.type,
-        title: desc.title,
-        content: desc.content,
-        image: null,
-      });
-      setEditingDescId(desc._id);
-      setShowDescForm(true);
-    }}
-    onDelete={async (id) => {
-      await axios.delete(`${API_URL}/api/product-descriptions/${id}`);
-      await fetchDescriptions(selectedProduct.code);
-    }}
-  />
-)}
+            if (editingDescId) {
+              await axios.put(`${API_URL}/api/product-descriptions/${editingDescId}`, formData);
+            } else {
+              await axios.post(`${API_URL}/api/product-descriptions`, formData);
+            }
+            await fetchDescriptions(selectedProduct.code);
+            setShowDescForm(false);
+            setEditingDescId(null);
+            setNewDesc({ type: "form", title: "", content: "", image: null });
+          }}
+          editingId={editingDescId}
+          onEdit={(desc) => {
+            setNewDesc({
+              type: desc.type,
+              title: desc.title,
+              content: desc.content,
+              image: null
+            });
+            setEditingDescId(desc._id);
+            setShowDescForm(true);
+          }}
+          onDelete={async (id) => {
+            await axios.delete(`${API_URL}/api/product-descriptions/${id}`);
+            await fetchDescriptions(selectedProduct.code);
+          }}
+        />
+      )}
 
-{showDetailModal && selectedProduct && (
-  <ProductDetailModal
-    product={selectedProduct}
-    groupedDetails={groupDetailsByColor(productDetails)}
-    onClose={() => setShowDetailModal(false)}
-    showForm={showDetailForm}
-    setShowForm={setShowDetailForm}
-    newDetail={newDetail}
-    setNewDetail={setNewDetail}
-    editingId={editingDetailId}
-    setEditingId={setEditingDetailId}
-    onEdit={(detail) => {
-      setShowDetailForm(true);
-      setEditingDetailId(detail._id);
-      setNewDetail({
-        colorCode: detail.colorCode,
-        colorName: detail.colorName,
-        size: detail.size,
-        quantity: detail.quantity,
-        image: null,
-      });
-    }}
-    onDelete={async (id) => {
-      await axios.delete(`${API_URL}/api/product-details/${id}`);
-      await fetchDetails(selectedProduct.code);
-    }}
-    fetchDetails={fetchDetails}
-  />
-)}
+      {showDetailModal && selectedProduct && (
+        <ProductDetailModal
+          product={selectedProduct}
+          groupedDetails={groupDetailsByColor(productDetails)}
+          onClose={() => setShowDetailModal(false)}
+          showForm={showDetailForm}
+          setShowForm={setShowDetailForm}
+          newDetail={newDetail}
+          setNewDetail={setNewDetail}
+          editingId={editingDetailId}
+          setEditingId={setEditingDetailId}
+          onEdit={(detail) => {
+            setShowDetailForm(true);
+            setEditingDetailId(detail._id);
+            setNewDetail({
+              colorCode: detail.colorCode,
+              colorName: detail.colorName,
+              size: detail.size,
+              quantity: detail.quantity,
+              image: null
+            });
+          }}
+          onDelete={async (id) => {
+            await axios.delete(`${API_URL}/api/product-details/${id}`);
+            await fetchDetails(selectedProduct.code);
+          }}
+          fetchDetails={fetchDetails}
+        />
+      )}
     </div>
   );
 };

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/ProductDescription.css";
 
-const API_URL = "http://localhost:5000";
+// Sử dụng biến môi trường cho API_URL
+const API_URL = process.env.REACT_APP_API_URL;
 
 const ProductDescription = ({ product }) => {
   const [descriptions, setDescriptions] = useState([]);

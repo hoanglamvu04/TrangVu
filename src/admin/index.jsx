@@ -5,6 +5,8 @@ import ProductManager from './pages/ProductManager';
 import OrderManager from './pages/OrderManager';
 import UserManager from './pages/UserManager';
 import CategoryManager from './pages/CategoryManager';
+import AdminReviewManagement from './pages/AdminReviewManagement';
+import AdminCollection from './pages/adminCollection';
 
 const AdminRoutes = () => {
   return (
@@ -15,6 +17,8 @@ const AdminRoutes = () => {
         <Route path="products" element={<ProductManager />} />
         <Route path="order-manager" element={<OrderManager />} />
         <Route path="users" element={<UserManager />} />
+        <Route path="reviews" element={<AdminReviewManagement />} />
+        <Route path="collections" element={<AdminCollection />} />
       </Route>
     </Routes>
   );

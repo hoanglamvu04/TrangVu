@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../styles/NotificationModal.css";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/notifications";
+// Thay đổi API_URL sang sử dụng biến môi trường
+const API_URL = `${process.env.REACT_APP_API_URL}/api/notifications`;
 
 const NotificationModal = ({ onClose }) => {
   const [notifications, setNotifications] = useState([]);

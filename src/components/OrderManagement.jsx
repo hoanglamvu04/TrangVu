@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/OrderManagement.css";
 import getColorNameFromCode from "../utils/getColorNameFromCode";
+import ReviewFormModal from "../components/ReviewFormModal";
+import ReviewMyModal from "../components/ReviewMyModal";
 
-const API_ORDER = "http://localhost:5000/api/orders"; // ⚠️ cập nhật đúng path backend của bạn
+const API_URL = process.env.REACT_APP_API_URL;
+const API_ORDER = `${API_URL}/api/orders`;
 
 const removeVietnameseTones = (str) => {
   return str.normalize("NFD")
@@ -13,15 +16,27 @@ const removeVietnameseTones = (str) => {
 };
 
 const OrderManagement = () => {
-  const customer = JSON.parse(localStorage.getItem("customer"));
+  const customer = JSON.parse(localStorage.getItem("customer") || "null");
   const customerId = customer?._id;
 
   const [orders, setOrders] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("Tất cả");
   const [expandedOrders, setExpandedOrders] = useState([]);
 
+  // map các item đã review: { orderId: ["code|detailCode", ...] }
+  const [reviewMap, setReviewMap] = useState({});
+
+  // modal state
+  const [openForm, setOpenForm] = useState(false);
+  const [openMy, setOpenMy] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [myReview, setMyReview] = useState(null);
+
   useEffect(() => {
+    if (!customerId) return;
     fetchCustomerOrders();
+    fetchMyReviewMap();
   }, [customerId]);
 
   const fetchCustomerOrders = async () => {
@@ -30,6 +45,15 @@ const OrderManagement = () => {
       setOrders(res.data);
     } catch (err) {
       console.error("Lỗi khi lấy đơn hàng:", err);
+    }
+  };
+
+  const fetchMyReviewMap = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/reviews/my-map/${customerId}`);
+      setReviewMap(res.data || {});
+    } catch (err) {
+      console.error("Lỗi lấy map đánh giá:", err);
     }
   };
 
@@ -72,6 +96,31 @@ const OrderManagement = () => {
   const filteredOrders = selectedStatus === "Tất cả"
     ? orders
     : orders.filter(order => statusLabels[order.status] === selectedStatus);
+
+  const itemKey = (it) => `${it.productCode}${it.productDetailCode ? "|" + it.productDetailCode : ""}`;
+  const isReviewed = (orderId, item) => (reviewMap[String(orderId)] || []).includes(itemKey(item));
+
+  const openReviewModal = (order, item) => {
+    setSelectedOrder(order);
+    setSelectedItem(item);
+    setOpenForm(true);
+  };
+
+  const openMyReviewModal = async (order, item) => {
+    try {
+      const res = await axios.get(`${API_URL}/api/reviews/me/${customerId}`);
+      const list = res.data || [];
+      const mine = list.find(r => String(r.order) === String(order._id) &&
+        r.productCode === item.productCode &&
+        (r.productDetailCode ? r.productDetailCode === item.productDetailCode : true));
+      setMyReview(mine || null);
+      setOpenMy(true);
+    } catch (e) {
+      console.error(e);
+      setMyReview(null);
+      setOpenMy(true);
+    }
+  };
 
   return (
     <div className="order-management">
@@ -127,8 +176,9 @@ const OrderManagement = () => {
                     <div className="order-detail-content">
                       <div className="order-info">
                         <h4>Thông Tin Giao Hàng</h4>
-                        <p><strong>Người nhận:</strong> {order.customer?.fullName || "Bạn"}</p>
-                        <p><strong>Ngày Đặt:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                        <p><strong>Tên người nhận:</strong> {order.address?.recipientName || order.customer?.fullName || "Bạn"}</p>
+                        <p><strong>Địa chỉ người nhận:</strong> {order.address?.fullAddress}</p>
+                        <p><strong>Thông tin liên hệ:</strong> {order.address?.phoneNumber}</p>
                         <p><strong>Mã đơn hàng:</strong> {order.orderCode}</p>
                       </div>
 
@@ -143,17 +193,33 @@ const OrderManagement = () => {
                               <th>SL</th>
                               <th>Đơn giá</th>
                               <th>Thành tiền</th>
+                              <th>Đánh giá</th>
                             </tr>
                           </thead>
                           <tbody>
                             {order.items.map((item, index) => (
                               <tr key={index}>
                                 <td>{item.productName}</td>
-                                <td>{item.size}</td>
-                                <td>{getColorNameFromCode(item.color)}</td>
+                                <td>{item.selectedSize}</td>
+                                <td>{getColorNameFromCode(item.selectedColor)}</td>
                                 <td>{item.quantity}</td>
                                 <td>{item.price.toLocaleString()} đ</td>
                                 <td>{(item.price * item.quantity).toLocaleString()} đ</td>
+                                <td>
+                                  {order.status === "Delivered" ? (
+                                    isReviewed(order._id, item) ? (
+                                      <button className="view-btn" onClick={() => openMyReviewModal(order, item)}>
+                                        Xem đánh giá của bạn
+                                      </button>
+                                    ) : (
+                                      <button className="review-btn" onClick={() => openReviewModal(order, item)}>
+                                        Đánh giá sản phẩm
+                                      </button>
+                                    )
+                                  ) : (
+                                    <span style={{ color: "#888" }}>—</span>
+                                  )}
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -167,6 +233,22 @@ const OrderManagement = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Modal viết review */}
+      <ReviewFormModal
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+        order={selectedOrder}
+        item={selectedItem}
+        onSubmitted={() => fetchMyReviewMap()}
+      />
+
+      {/* Modal xem review của tôi */}
+      <ReviewMyModal
+        open={openMy}
+        onClose={() => setOpenMy(false)}
+        review={myReview}
+      />
     </div>
   );
 };

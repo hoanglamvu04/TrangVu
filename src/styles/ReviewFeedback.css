@@ -1,128 +1,359 @@
-.review-feedback {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+/* ====== Layout chung ====== */
+.review-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+@media (min-width: 768px) {
+  .review-section {
+    grid-template-columns: 1fr 1.2fr; /* trái: form, phải: list */
   }
-  
-  .review-feedback h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #222;
-  }
-  
-  .review-form {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-  }
-  
-  .form-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-  
-  .form-row select {
-    flex: 1;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  
-  .rating-row {
-    margin-bottom: 15px;
-  }
-  
-  .star {
-    font-size: 24px;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .star:hover {
-    transform: scale(1.2);
-  }
-  
-  .star.selected {
-    color: orange;
-  }
-  
-  textarea {
-    width: 100%;
-    min-height: 80px;
-    padding: 10px;
-    resize: vertical;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 15px;
-    font-size: 14px;
-  }
-  
-  input[type="file"] {
-    margin-bottom: 15px;
-  }
-  
-  .submit-btn {
-    background: #ff5c00;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .submit-btn:hover {
-    background: #e14f00;
-  }
-  
-  .review-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .review-item {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 10px;
-    border-left: 5px solid #ff5c00;
-  }
-  
-  .review-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .review-stars {
-    margin-bottom: 6px;
-  }
-  
-  .review-image {
-    width: 100px;
-    margin-top: 10px;
-    border-radius: 6px;
-    object-fit: cover;
-  }
-  
-  .status-tag {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    color: white;
-  }
-  
-  .status-tag.chờ-duyệt {
-    background: gray;
-  }
-  
-  .status-tag.đã-duyệt {
-    background: green;
-  }
-  
+}
+
+.review-form,
+.product-reviews {
+  background: #fff;
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(34, 41, 47, 0.04);
+}
+
+/* ====== Tiêu đề box ====== */
+.review-form h3,
+.product-reviews h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* ====== Form gửi đánh giá ====== */
+.review-form select,
+.review-form textarea,
+.review-form input[type="file"],
+.review-form button {
+  width: 100%;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.review-form select,
+.review-form textarea {
+  border: 1px solid #dfe3e8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  background: #fff;
+  transition: border-color .2s ease;
+}
+
+.review-form select:focus,
+.review-form textarea:focus {
+  border-color: #16a34a; /* xanh lá nhẹ */
+}
+
+.review-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.rating-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  user-select: none;
+}
+
+.rating-row svg,
+.rating-row .star {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.review-preview {
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
+.review-form button {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .02s ease, background .2s ease, box-shadow .2s ease;
+  box-shadow: 0 2px 6px rgba(22,163,74,.18);
+}
+
+.review-form button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.review-form button:hover:not(:disabled) {
+  background: #148a3f;
+}
+
+/* ====== Khối tóm tắt rating ====== */
+.review-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.review-summary .avg-rating {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  transform: translateY(1px);
+}
+
+/* ====== Bộ lọc ====== */
+.review-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+.review-filters button {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #111827;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.review-filters button:hover {
+  border-color: #16a34a;
+}
+
+.review-filters button.active {
+  background: #e8f7ee;
+  color: #0f7a35;
+  border-color: #16a34a;
+  font-weight: 600;
+}
+
+/* ====== Thẻ review ====== */
+.review-card {
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.review-header strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.review-meta {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: #6b7280;
+}
+
+.review-card p {
+  margin: 8px 0 6px;
+  color: #1f2937;
+  line-height: 1.45;
+}
+
+.review-img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  display: block;
+  margin-top: 6px;
+}
+
+/* ====== Phân trang ====== */
+.pagination {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.pagination button {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all .15s ease;
+}
+
+.pagination button:hover {
+  border-color: #16a34a;
+}
+
+.pagination button.active {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+
+/* ====== Phần cũ vẫn dùng (form-row...) để tương thích ====== */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+@media (min-width: 480px) {
+  .form-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* ====== Utility ====== */
+.border { border: 1px solid #eef0f3; }
+.rounded-lg { border-radius: 12px; }
+.shadow-sm { box-shadow: 0 2px 10px rgba(34,41,47,0.04); }
+.p-4 { padding: 16px; }
+.mb-3 { margin-bottom: 12px; }
+.font-semibold { font-weight: 600; }
+/* Modal đơn giản dùng cho ReviewFormModal & ReviewMyModal */
+.rfm-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.rfm-modal {
+  width: min(560px, 92vw);
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+.rfm-actions {
+  display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px;
+}
+.rfm-submit {
+  background: #16a34a; color: #fff; border: none; border-radius: 10px; padding: 8px 12px; font-weight: 600; cursor: pointer;
+}
+.rfm-cancel {
+  background: #eef0f3; color: #111827; border: none; border-radius: 10px; padding: 8px 12px; cursor: pointer;
+}
+.admin-actions .admin-quick button {
+  margin-right: 6px;
+  border: 1px solid #e5e7eb; border-radius: 8px; padding: 4px 8px; background: #fff; cursor: pointer;
+}
+.admin-reply { display: flex; gap: 6px; margin-top: 6px; }
+.admin-reply input {
+  flex: 1; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 8px;
+}
+.admin-reply button {
+  border: 1px solid #16a34a; color: #0f7a35; border-radius: 8px; padding: 6px 10px; background: #e8f7ee; cursor: pointer; font-weight: 600;
+}
+/* ====== Replies (public) ====== */
+.review-replies {
+  margin-top: 8px;
+  padding-left: 8px;
+  border-left: 3px solid #e5e7eb;
+}
+
+.reply {
+  background: #f9fafb;
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reply-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  background: #111827;
+  color: #fff;
+  font-size: 13px;
+}
+
+.reply-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.reply-name {
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reply-badge {
+  font-size: 11px;
+  color: #0f6e2f;
+  background: #e8f7ee;
+  border: 1px solid #b7e5c8;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.reply-time {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.reply-body {
+  margin-top: 6px;
+  white-space: pre-wrap;
+  color: #111827;
+  font-size: 14px;
+}

@@ -6,7 +6,8 @@ import axios from "axios";
 import "../styles/address.css";
 import "../styles/AddressModal.css";
 
-const API_URL = "http://localhost:5000/api/addresses";
+// Sử dụng biến môi trường cho API_URL
+const API_URL = process.env.REACT_APP_API_URL + "/api/addresses";
 
 const AddressManagement = () => {
   const [addresses, setAddresses] = useState([]);
@@ -142,7 +143,7 @@ const AddressManagement = () => {
         {addresses.map((addr) => (
           <div key={addr._id} className="address-card">
             <div className="address-info">
-              <strong>{addr.label || "(Không có ghi chú)"}</strong>
+              <strong>{addr.label || "Không có tên người nhận"}</strong>
               <p>{addr.fullAddress}</p>
               <p>SĐT: {addr.phoneNumber || "Không có"}</p>
             </div>

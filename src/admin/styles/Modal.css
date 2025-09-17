@@ -104,3 +104,12 @@
 .order-btn-group .cancel-btn:hover {
   background-color: #333;
 }
+.modal-content.compact{width:min(92vw,560px);max-height:86vh;border-radius:12px;padding:14px 16px}
+.modal-content.compact h3{margin:4px 0 8px;text-align:center}
+.modal-content.compact .modal-body{max-height:75vh;overflow:auto;padding-right:4px}
+.form-container.compact{display:grid;gap:10px}
+.form-container.compact input,
+.form-container.compact select,
+.form-container.compact textarea{height:38px;font-size:14px}
+.form-container.compact textarea{height:72px;resize:vertical}
+.mini-label{font-size:12px;opacity:.75;margin-top:4px}

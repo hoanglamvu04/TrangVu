@@ -7,7 +7,7 @@ const productDetailSchema = new mongoose.Schema({
   colorName: String,
   size: String,
   quantity: Number,
-  image: String, 
+  images: { type: [String], default: [] }, 
 });
 
 module.exports = mongoose.model("ProductDetail", productDetailSchema);

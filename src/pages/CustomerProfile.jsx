@@ -11,8 +11,8 @@ import {
   FaRegStar, FaSignOutAlt, FaChevronRight, FaLock
 } from "react-icons/fa";
 
+// Sử dụng biến môi trường cho API_URL
 const API_URL = process.env.REACT_APP_API_URL;
-console.log("🌐 API_URL = ", API_URL);
 
 const CustomerProfile = () => {
   const location = useLocation();
@@ -40,7 +40,7 @@ const CustomerProfile = () => {
       setCustomer(parsed);
 
       axios
-        .get(`http://localhost:5000/api/admin/check-by-code/${parsed.customerCode}`)
+        .get(`${API_URL}/api/admin/check-by-code/${parsed.customerCode}`)
         .then(res => setIsAdmin(res.data.isAdmin))
         .catch(err => console.log("Lỗi kiểm tra quyền admin:", err));
     }
@@ -74,13 +74,13 @@ const CustomerProfile = () => {
         const formData = new FormData();
         formData.append("avatar", avatarFile);
 
-        const res = await axios.post("http://localhost:5000/api/auth/upload-avatar", formData, {
+        const res = await axios.post(`${API_URL}/api/auth/upload-avatar`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         avatarPath = res.data.filePath;
       }
 
-      const updateRes = await axios.put(`http://localhost:5000/api/auth/update/${customer._id}`, {
+      const updateRes = await axios.put(`${API_URL}/api/auth/update/${customer._id}`, {
         fullName,
         phoneNumber: phone,
         birthDate,
@@ -103,7 +103,7 @@ const CustomerProfile = () => {
     if (newPwd !== confirmPwd) return alert("Xác nhận mật khẩu không khớp");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/change-password", {
+      const res = await axios.post(`${API_URL}/api/auth/change-password`, {
         userId: customer._id,
         oldPassword: oldPwd,
         newPassword: newPwd

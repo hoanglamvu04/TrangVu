@@ -28,6 +28,7 @@ const ProductFormModal = ({
             <option value="Active">Đang bán</option>
             <option value="Inactive">Ngưng bán</option>
           </select>
+          <input name="tags" placeholder="Tags (vd: everyday, cheap)" value={form.tags || ""} onChange={onChange} />
           <input name="image" type="file" accept="image/*" onChange={onChange} />
           <div className="form-buttons">
             <button className="btn-submit" onClick={onSubmit}>

@@ -46,7 +46,7 @@ const AddressModal = ({
 
         <input
           type="text"
-          placeholder="Ghi chú (Nhà riêng, Văn phòng...)"
+          placeholder="Tên Người Nhận"
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
         />

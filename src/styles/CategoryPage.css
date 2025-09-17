@@ -11,7 +11,7 @@
 }
 
 .filter-sidebar {
-  width: 330px;
+  width: 20%;
   height: 100%;
   background: #fff;
   padding: 0 15px 0 15px;
@@ -23,6 +23,7 @@
 /* Khu vực danh sách sản phẩm */
 .product-section {
   flex-grow: 1;
+  width: 75%;
 }
 
 /* Lưới sản phẩm */
@@ -30,7 +31,18 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr); 
 }
-
+.product-name {
+  --lines: 2;               /* đổi 1/2/3 tùy ý */
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines);
+  line-clamp: var(--lines); /* Firefox mới cũng hỗ trợ */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  min-height: calc(1.35em * var(--lines)); /* giữ chiều cao thẻ ổn định */
+}
 /* Điều chỉnh khi màn hình nhỏ hơn */
 @media (max-width: 1024px) {
   .category-container {

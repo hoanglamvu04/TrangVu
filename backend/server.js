@@ -1,44 +1,48 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
+require("dotenv").config();
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
-const productDetailRoutes = require("./routes/productDetail");
-const adminUsersRoutes = require("./routes/adminUsers");
-const authRoutes = require("./routes/auth");
-const categoryRoutes = require("./routes/category");
-const productRoutes = require("./routes/product");
-const adminOrdersRoute = require("./routes/adminOrders");
-const productDescriptionRoutes = require("./routes/productDescription");
-const cartRoutes = require("./routes/cart");
-const addressRoutes = require("./routes/addressRoutes");
-const orderPublicRoutes = require("./routes/orderPublicRoutes");
-const notificationRoutes = require("./routes/notifications");
-const passwordResetRoutes = require("./routes/authRoutes");
-const adminRoutes = require("./routes/adminRoutes");
 
-app.use("/api/admin/users", adminUsersRoutes);
-app.use("/api/product-details", productDetailRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/admin/orders", adminOrdersRoute);
-app.use("/api/product-descriptions", productDescriptionRoutes);
+function mountRoute(urlPrefix, relativeFilePath) {
+  const absPath = path.join(__dirname, relativeFilePath);
+  if (!fs.existsSync(absPath)) {
+    console.warn(`⚠️  Route file not found: ${relativeFilePath} (mounted at ${urlPrefix}). Hãy tạo file này hoặc chỉnh lại đường dẫn require.`);
+    return;
+  }
+  const router = require(absPath);
+  app.use(urlPrefix, router);
+}
+
+mountRoute("/api/admin/users", "./routes/adminUsers.js");
+mountRoute("/api/product-details", "./routes/productDetail.js");
+mountRoute("/api/auth", "./routes/auth.js");
+mountRoute("/api/categories", "./routes/category.js");
+mountRoute("/api/products", "./routes/product.js");
+mountRoute("/api/admin/orders", "./routes/adminOrders.js");
+mountRoute("/api/product-descriptions", "./routes/productDescription.js");
+mountRoute("/api/cart", "./routes/cart.js");
+mountRoute("/api/addresses", "./routes/addressRoutes.js");
+mountRoute("/api/orders", "./routes/orderPublicRoutes.js");
+mountRoute("/api/notifications", "./routes/notifications.js");
+mountRoute("/api/admin", "./routes/adminRoutes.js");
+mountRoute("/api/reviews", "./routes/review.js");
+mountRoute("/api/admin/reviews", "./routes/adminReviews.js");
+mountRoute("/api/collections", "./routes/adminCollection.js");
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/api/cart", cartRoutes);
-app.use("/api/addresses", addressRoutes);
-app.use("/api/orders", orderPublicRoutes);
-app.use("/api/notifications", notificationRoutes); 
-app.use("/api/auth", passwordResetRoutes);  
-app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("Lâm Vũ Nè 🚀");

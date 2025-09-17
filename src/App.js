@@ -13,7 +13,8 @@ import AdminRoutes from "./admin";
 import { CartProvider } from "../src/contexts/CartContext";
 import Checkout from "./pages/Checkout";
 import SearchResults from "./pages/SearchResults";
-
+import CollectionsIndex from "./pages/CollectionsIndex";
+import CollectionPage from "./pages/CollectionPage";
 function App() {
   return (
     <Router>
@@ -28,7 +29,7 @@ function App() {
             element={
               <>
                 <Header />
-                <div className="main-wrapper"> {/* 👈 Thay vì page-content */}
+                <div className="main-wrapper"> 
                   <Routes>
                     <Route
                       path="/"
@@ -48,6 +49,8 @@ function App() {
                     <Route path="/review-feedback" element={<CustomerProfile />} />
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="/search" element={<SearchResults />} />
+                    <Route path="/collections" element={<CollectionsIndex />} />
+                    <Route path="/collection/:slug" element={<CollectionPage />} />
                   </Routes>
                   <Footer />
                 </div>

@@ -68,23 +68,23 @@ const AuthModal = ({ onClose }) => {
     setLoading(true);
     try {
       if (isLogin) {
-        const res = await axios.post("http://localhost:5000/api/auth/login", {
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
           email: formData.email,
           password: formData.password,
         });
-      
+
         if (res.data.user.status === "Blocked") {
           setError("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
           setLoading(false);
           return;
         }
-      
+
         alert("Đăng nhập thành công!");
         localStorage.setItem("customer", JSON.stringify(res.data.user));
         onClose();
       }
-       else {
-        await axios.post("http://localhost:5000/api/auth/register", {
+      else {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
           fullName: formData.name,
           email: formData.email,
           password: formData.password,
@@ -104,14 +104,14 @@ const AuthModal = ({ onClose }) => {
     try {
       if (step === 1) {
         if (!resetEmail) return setError("Vui lòng nhập email!");
-        await axios.post("http://localhost:5000/api/auth/send-reset-code", { email: resetEmail });
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/send-reset-code`, { email: resetEmail });
         alert("Đã gửi mã xác nhận!");
         setStep(2);
         return;
       }
       if (step === 2) {
         if (!resetCode) return setError("Vui lòng nhập mã xác nhận!");
-        const res = await axios.post("http://localhost:5000/api/auth/verify-code", {
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/verify-code`, {
           email: resetEmail,
           code: resetCode,
         });
@@ -124,7 +124,7 @@ const AuthModal = ({ onClose }) => {
           return setError("Vui lòng nhập đầy đủ mật khẩu!");
         if (newPassword !== confirmNewPassword)
           return setError("Mật khẩu xác nhận không khớp!");
-        await axios.post("http://localhost:5000/api/auth/reset-password", {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/reset-password`, {
           email: resetEmail,
           code: resetCode,
           newPassword,

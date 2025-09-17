@@ -5,7 +5,8 @@ import ProductCard from "../components/ProductCard";
 import FilterSidebar from "../components/FilterSidebar";
 import "../styles/CategoryPage.css";
 
-const API_URL = "http://localhost:5000/api/products";
+// Sử dụng biến môi trường cho API_URL
+const API_URL = `${process.env.REACT_APP_API_URL}/api/products`;
 
 const Category = () => {
   const { categoryCode } = useParams();

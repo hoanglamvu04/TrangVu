@@ -5,7 +5,8 @@ import ProductCard from "../components/ProductCard";
 import "../styles/ProductDetail.css"; 
 import "../styles/search.css";
 
-const API_URL = "http://localhost:5000";
+// Sử dụng biến môi trường cho API_URL
+const API_URL = process.env.REACT_APP_API_URL;
 
 const SearchResults = () => {
   const location = useLocation();

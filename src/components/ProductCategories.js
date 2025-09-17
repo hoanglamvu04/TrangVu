@@ -3,8 +3,8 @@ import "../styles/ProductCategories.css";
 
 const categoriesData = {
   men: [
-    { name: "Áo Thun", image: "/assets/images/men/ao-thun.png", link: "/category/ao-thun" },
-    { name: "Sơ Mi", image: "/assets/images/men/so-mi.png", link: "/category/so-mi" },
+    { name: "Áo Thun", image: "/assets/images/men/ao-thun.png", link: "/category/ao-thun-nam" },
+    { name: "Sơ Mi", image: "/assets/images/men/so-mi.png", link: "/category/so-mi-nam" },
     { name: "Áo Khoác", image: "/assets/images/men/ao-khoac.png", link: "/category/ao-khoac" },
     { name: "Quần Dài", image: "/assets/images/men/quan-dai.png", link: "/category/quan-dai" },
     { name: "Quần Short", image: "/assets/images/men/quan-short.png", link: "/category/quan-short" },

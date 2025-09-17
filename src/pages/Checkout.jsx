@@ -7,28 +7,27 @@ import "../styles/Checkout.css";
 const API_ADDRESS = "http://localhost:5000/api/addresses";
 const API_ORDER = "http://localhost:5000/api/orders";
 const API_CART = "http://localhost:5000/api/cart";
-const API_NOTIFICATION = "http://localhost:5000/api/notifications";
 
 const Checkout = () => {
-  const navigate = useNavigate(); // dùng rồi nhưng không cần navigate nữa nếu reload thật
+  const navigate = useNavigate(); // Dùng navigate để chuyển hướng sau khi đặt hàng
   const customer = JSON.parse(localStorage.getItem("customer"));
   const customerId = customer?._id;
 
-  const [cartItems, setCartItems] = useState([]);
-  const [addresses, setAddresses] = useState([]);
-  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [cartItems, setCartItems] = useState([]); // Giỏ hàng của khách hàng
+  const [addresses, setAddresses] = useState([]); // Địa chỉ của khách hàng
+  const [selectedAddressId, setSelectedAddressId] = useState(""); // Địa chỉ được chọn
 
   useEffect(() => {
     if (!customerId) return;
-    fetchAddresses();
-    fetchCartItems();
+    fetchAddresses(); // Lấy địa chỉ của khách hàng
+    fetchCartItems(); // Lấy sản phẩm trong giỏ hàng
   }, [customerId]);
 
   const fetchAddresses = async () => {
     try {
       const res = await axios.get(`${API_ADDRESS}/${customerId}`);
       setAddresses(res.data);
-      if (res.data.length) setSelectedAddressId(res.data[0]._id);
+      if (res.data.length) setSelectedAddressId(res.data[0]._id); // Mặc định chọn địa chỉ đầu tiên
     } catch (err) {
       console.error("❌ Lỗi khi lấy địa chỉ:", err);
     }
@@ -47,48 +46,44 @@ const Checkout = () => {
     }
   };
 
-  const handlePlaceOrder = async () => {
-    const addressObj = addresses.find((a) => a._id === selectedAddressId);
-    if (!addressObj) return alert("Vui lòng chọn địa chỉ.");
+const handlePlaceOrder = async () => {
+  const addressObj = addresses.find((a) => a._id === selectedAddressId);
+  if (!addressObj) return alert("Vui lòng chọn địa chỉ.");
 
-    try {
-      const orderItems = cartItems.map((i) => ({
-        productName: i.name,
-        quantity: i.quantity,
-        price: i.price,
-        color: i.selectedColor,
-        size: i.selectedSize,
-      }));
+  try {
+    const orderItems = cartItems.map((i) => ({
+      productCode: i.productCode || i.code,       // phòng trường hợp key khác
+      productDetailCode: i.detailCode,
+      productName: i.name,
+      quantity: i.quantity,
+      price: i.price,
+      selectedColor: i.selectedColor,
+      selectedSize: i.selectedSize,
+    }));
 
-      const totalAmount = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
+    const totalAmount = cartItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
-      const orderRes = await axios.post(API_ORDER, {
-        customer: customerId,
-        items: orderItems,
-        totalAmount,
-        address: {
-          fullAddress: addressObj.fullAddress,
-          phoneNumber: addressObj.phoneNumber,
-        },
-      });
+    await axios.post(API_ORDER, {
+      customer: customerId,
+      items: orderItems,
+      totalAmount,
+      address: {
+        recipientName: addressObj.label,          // <— TÊN NGƯỜI NHẬN
+        fullAddress: addressObj.fullAddress,
+        phoneNumber: addressObj.phoneNumber,
+      },
+    });
 
-      // await axios.post(API_NOTIFICATION, {
-      //   customerId,
-      //   orderCode: orderRes.data.orderCode,
-      //   type: "placed",
-      //   message: `Bạn đã đặt đơn hàng ${orderRes.data.orderCode} thành công với tổng tiền ${totalAmount.toLocaleString("vi-VN")} ₫.`,
-      // });      
+    await axios.delete(`${API_CART}/clear/${customerId}`);
+    await fetchCartItems();
 
-      await axios.delete(`${API_CART}/clear/${customerId}`);
-      await fetchCartItems();
-
-      alert("Đặt hàng thành công!");
-      window.location.href = "/order-management"; // ✅ chuyển trang bằng reload
-    } catch (err) {
-      console.error("❌ Lỗi khi đặt hàng:", err);
-      alert("Đặt hàng thất bại. Vui lòng thử lại.");
-    }
-  };
+    alert("Đặt hàng thành công!");
+    navigate("/order-management");
+  } catch (err) {
+    console.error("❌ Lỗi khi đặt hàng:", err);
+    alert("Đặt hàng thất bại. Vui lòng thử lại.");
+  }
+};
 
   const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
   const formatCurrency = (n) =>
